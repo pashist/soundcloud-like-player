@@ -21,26 +21,35 @@ let config = {
                     plugins: ['transform-object-rest-spread']
                 }
             },
-            { test: /\.html$/, loader: 'raw' },
-            { test: /\.css$/, loaders: ['style', 'css'] }
+            {test: /\.html$/, loader: 'raw'},
+            {test: /\.css$/, loaders: ['style', 'css']}
         ]
     },
     resolve: {
         extensions: ['', '.js', '.html', '.css']
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './src/index.html'
-        })
-    ],
+    plugins: [],
     devServer: {
         historyApiFallback: true,
         contentBase: './src'
     }
 };
 
-if(process.env.NODE_ENV === 'production') {
-    config.entry = ['./src/player.js'];
+if (process.env.NODE_ENV == 'production') {
+    config.entry = './src/player.js';
+    config.output.library = 'SoundCloudLikePlayer';
+    config.output.libraryTarget = 'umd';// 'commonjs2';
+    config.plugins.push(
+        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}})
+    );
+    config.plugins.push(
+        new webpack.optimize.UglifyJsPlugin({compress: {warnings: true}})
+    );
+} else {
+    config.plugins.push(
+        new HtmlWebpackPlugin({template: './src/index.html'})
+    );
+
 }
 
 module.exports = config;

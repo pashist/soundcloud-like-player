@@ -1,4 +1,5 @@
-import SoundCloudLikePlayer from './player';
+//let SoundCloudLikePlayer = require('../dist').default;
+import SoundCloudLikePlayer from '../dist';
 
 let player = new SoundCloudLikePlayer({
     container: document.getElementById('example'),

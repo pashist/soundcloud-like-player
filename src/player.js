@@ -13,28 +13,31 @@ import store, {
     actionSetPlayer
 } from './app/store';
 
-export default class SoundCloudPlayer {
+export default class SoundCloudLikePlayer {
     constructor(opts) {
         this.options = this.parseOptions(opts);
         this.player = new SoundCloudAudio(this.options.clientId);
-        this.playerApp = ReactDOM.render(
-            <Provider store={store}><App id={this.options.id} player={this.player}/></Provider>, this.options.container
+        this.app = ReactDOM.render(
+            <Provider store={store}><App id={this.options.id}/></Provider>, this.options.container
         );
         store.dispatch(actionSetPlayer(this.player));
     }
 
     parseOptions(data) {
         const defaults = {
-            clientId: 'cf92370f6c9691fab24bdf6791b57d61'
+            id: 'scp_' + Math.random()
         };
         let options = Object.assign({}, defaults, data instanceof Object ? data : {});
+        
         if (!options.container) {
             throw new Error('Parameter `container` required');
         }
         if (!options.container instanceof HTMLElement) {
             throw new Error('Parameter `container` invalid');
         }
-        options.id = 'scp_' + Math.random();
+        if (!options.clientId) {
+            throw new Error('Parameter `clientId` required');
+        }
         return options;
     }
 
