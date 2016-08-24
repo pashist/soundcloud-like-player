@@ -1,4 +1,10 @@
 # SoundCloudLikePlayer
+[![npm](https://img.shields.io/npm/v/soundcloud-like-player.svg?maxAge=2592000)](https://www.npmjs.com/package/soundcloud-like-player)
+
+## Installation
+```
+npm install soundcloud-like-player --save
+```
 ## Usage example
 ```
 import SoundCloudLikePlayer from 'soundcloud-like-player';
