@@ -1,5 +1,6 @@
-# SoundCloudLikePlayer
-[![npm](https://img.shields.io/npm/v/soundcloud-like-player.svg?maxAge=2592000)](https://www.npmjs.com/package/soundcloud-like-player)
+# SoundCloudLikePlayer [![npm](https://img.shields.io/npm/v/soundcloud-like-player.svg?maxAge=2592000)](https://www.npmjs.com/package/soundcloud-like-player)
+This library allows you to insert in any html element on page music player like a soundcloud widget.
+It uses [soundcloud-audio](https://www.npmjs.com/package/soundcloud-audio) for fetching and playing tracks from [soundcloud](https://soundcloud.com).
 
 ## Installation
 ```
