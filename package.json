@@ -1,6 +1,6 @@
 {
   "name": "soundcloud-like-player",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "build": "webpack --progress",
     "build:prod": "set NODE_ENV=production&&webpack -p --progress",
@@ -8,6 +8,10 @@
   },
   "main": "dist/index.js",
   "dependencies": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pashist/soundcloud-like-player"
   },
   "devDependencies": {
     "babel-core": "^6.13.2",
