@@ -45,6 +45,8 @@ const reducer = (state, action) => {
             };
         case 'SET_PLAYER':
             return {...state, player: action.player};
+        case 'SET_OPTIONS':
+            return {...state, options: action.options};
         default:
             return state;
     }
@@ -73,7 +75,9 @@ export function actionStop() {
 export function actionSetPlayer(player) {
     return {type: 'SET_PLAYER', player: player}
 }
-
+export function actionSetOptions(options) {
+    return {type: 'SET_OPTIONS', options: options}
+}
 /**
  * Set current track and fetch waveform data for track if it not fetched yet
  * @param index Track index

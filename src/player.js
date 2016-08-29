@@ -1,4 +1,5 @@
 import SoundCloudAudio from 'soundcloud-audio';
+import {merge} from 'lodash';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -12,28 +13,45 @@ import store, {
     actionSetTrack,
     actionNext,
     actionSetPlayer,
-    actionAddTracks
+    actionAddTracks,
+    actionSetOptions
 } from './app/store';
 
 export default class SoundCloudLikePlayer {
+    
     constructor(opts) {
         this.options = this.parseOptions(opts);
         this.player = new SoundCloudAudio(this.options.clientId);
+        
+        store.dispatch(actionSetPlayer(this.player));
+        store.dispatch(actionSetOptions(this.options));
+        
         this.app = ReactDOM.render(
             <Provider store={store}><App id={this.options.id}/></Provider>, this.options.container
         );
-        store.dispatch(actionSetPlayer(this.player));
-    }
 
-    parseOptions(data) {
-        const defaults = {
+    }
+    get defaults(){
+        return {
             id: 'scp_' + Math.random(),
             autoplay: false,
-            colors: {},
+            colors: {
+                playButton: {
+                    fill: ['#ff5500', '#ff2200'],
+                    stroke: '#cc4400'
+                },
+                playlist: {
+                    track: '#333',
+                    trackActive:  '#ff5500'
+                }
+            },
             width: 'auto',
             height: 'auto'
         };
-        let options = Object.assign({}, defaults, data instanceof Object ? data : {});
+    }
+    
+    parseOptions(data) {
+        let options = merge(this.defaults, data instanceof Object ? data : {});
 
         if (!options.container) {
             throw new Error('Parameter `container` required');

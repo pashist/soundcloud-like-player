@@ -14,6 +14,7 @@ export default class Playlist extends React.Component {
                         isPlaying={this.props.isPlaying}
                         track={track}
                         onClick={this.onClick.bind(this, i)}
+                        colors={this.props.options.colors.playlist}
                     />)
                 }
             </div>

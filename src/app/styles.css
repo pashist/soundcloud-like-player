@@ -48,8 +48,17 @@
     border:0;
     background:transparent;
     margin: 2px 10px 1px 1px;
-}
 
+}
+.scl-player .player .button .scpPlayButtonOverlay {
+    visibility: hidden;
+}
+.scl-player .player .button:hover .scpPlayButtonOverlay {
+    visibility: visible;
+}
+.scl-player .player .button * {
+    cursor: pointer;
+}
 .scl-player .artwork {
     border-radius: 2px 0 0 2px;
     opacity: 1;

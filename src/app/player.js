@@ -6,6 +6,7 @@ import PlayerWaveForm from './player-waveform';
 import TrackStats from './tracks-stats';
 import {connect} from 'react-redux';
 import {actionPlay, actionPause, actionToggle, actionSetTrackCurrentTime} from './store';
+import {get as getProperty} from 'lodash'
 
 export default class Player extends React.Component {
     render() {
@@ -14,7 +15,8 @@ export default class Player extends React.Component {
                 <PlayerArtwork track={this.props.tracks[this.props.index]}/>
                 <div className="sound">
                     <div className="sound-header">
-                        <PlayerButton isPlaying={this.props.isPlaying} onClick={this.togglePlayback.bind(this)}/>
+                        <PlayerButton color={getProperty(this.props, 'options.colors.playButton')}
+                                      isPlaying={this.props.isPlaying} onClick={this.togglePlayback.bind(this)}/>
                         <PlayerTitle track={this.props.tracks[this.props.index]}/>
                     </div>
                     <PlayerWaveForm
