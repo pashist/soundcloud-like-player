@@ -56,10 +56,7 @@ export default class SoundCloudLikePlayer {
                         ? data.tracks : data.kind == 'track'
                         ? [data] : [];
                     store.dispatch(actionSetTracks(tracks));
-                    store.dispatch(actionSetTrack(0));
-                    if (this.options.autoplay) {
-                        store.dispatch(actionPlay({index: 0}));
-                    }
+                    store.dispatch(actionSetTrack(0, this.options.autoplay));
                     resolve(data);
                 })
             } catch (err) {

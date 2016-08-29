@@ -8,4 +8,5 @@ let player = new SoundCloudLikePlayer({
     autoplay: false
 });
 player.on('ended', () => player.next());
-player.search({q: 'Robert Miles'}).then(data => console.log('data', data)).catch(err => console.log('err', err));
+//player.resolve('http://soundcloud.com/jxnblk/sets/yello');
+player.search({q: 'buskers', limit: 20, offset: 10});

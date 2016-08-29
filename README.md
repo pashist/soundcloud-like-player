@@ -6,16 +6,23 @@ It uses [soundcloud-audio](https://www.npmjs.com/package/soundcloud-audio) for f
 ```
 npm install soundcloud-like-player --save
 ```
-## Usage example
+## Usage examples
+#### Basic usage
 ```
 import SoundCloudLikePlayer from 'soundcloud-like-player';
 
 let player = new SoundCloudLikePlayer({
     container: document.getElementById('example'),
-    clientId: 'cf92370f6c9691fab24bdf6791b57d61'
+    clientId: 'cf92370f6c9691fab24bdf6791b57d61',
+    autoplay: true
 });
 player.on('ended', () => player.next());
-player.resolve('http://soundcloud.com/jxnblk/sets/yello').then(() => player.play());
+player.resolve('http://soundcloud.com/jxnblk/sets/yello');
 ```
+#### Tracks search
+```
+player.search({q: 'buskers', limit: 20, offset: 10})
+```
+see https://developers.soundcloud.com/docs/api/guide#search for more search options
 ## API
 Coming soon...

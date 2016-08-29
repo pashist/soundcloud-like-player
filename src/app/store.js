@@ -12,7 +12,6 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-    console.log('dispatch ', action.type);
     switch (action.type) {
         case 'PLAYBACK_START':
             store.getState().player.play({playlistIndex: action.index});
