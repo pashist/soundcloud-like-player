@@ -1,4 +1,5 @@
-const SoundCloudAudio = require('soundcloud-audio');
+import SoundCloudAudio from 'soundcloud-audio';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './app/app';
@@ -10,7 +11,8 @@ import store, {
     actionSetTracks,
     actionSetTrack,
     actionNext,
-    actionSetPlayer
+    actionSetPlayer,
+    actionAddTracks
 } from './app/store';
 
 export default class SoundCloudLikePlayer {
@@ -25,10 +27,14 @@ export default class SoundCloudLikePlayer {
 
     parseOptions(data) {
         const defaults = {
-            id: 'scp_' + Math.random()
+            id: 'scp_' + Math.random(),
+            autoplay: false,
+            colors: {},
+            width: 'auto',
+            height: 'auto'
         };
         let options = Object.assign({}, defaults, data instanceof Object ? data : {});
-        
+
         if (!options.container) {
             throw new Error('Parameter `container` required');
         }
@@ -45,18 +51,35 @@ export default class SoundCloudLikePlayer {
         return new Promise((resolve, reject) => {
             try {
                 this.player.resolve(url, data => {
-                    let tracks = data instanceof Array 
-                        ? data : data.kind == 'playlist' 
-                        ? data.tracks : data.kind == 'track' 
+                    let tracks = data instanceof Array
+                        ? data : data.kind == 'playlist'
+                        ? data.tracks : data.kind == 'track'
                         ? [data] : [];
                     store.dispatch(actionSetTracks(tracks));
                     store.dispatch(actionSetTrack(0));
+                    if (this.options.autoplay) {
+                        store.dispatch(actionPlay({index: 0}));
+                    }
                     resolve(data);
                 })
             } catch (err) {
                 reject(err);
             }
         });
+    }
+
+    search(params, clear = true) {
+        return this.player.search(params, clear)
+            .then(data => {
+                let tracks = data instanceof Array ? data : [];
+                if (clear) {
+                    store.dispatch(actionSetTracks(tracks));
+                    store.dispatch(actionSetTrack(0, this.options.autoplay));
+                } else {
+                    store.dispatch(actionAddTracks(tracks));
+                }
+                return data;
+            })
     }
 
     play(args) {
@@ -74,10 +97,14 @@ export default class SoundCloudLikePlayer {
     next() {
         store.dispatch(actionNext());
     }
-    
+
     on(name, callback) {
         return this.player.on(name, callback)
     }
+
+    configure(key, value) {
+        this.options[key] = value;
+        return this;
+    }
+
 }
-
-

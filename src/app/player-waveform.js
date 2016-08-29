@@ -46,7 +46,7 @@ class PlayerWaveForm extends React.Component {
     }
 
     componentDidMount() {
-        this.updateSize();
+        window.addEventListener("resize", () => this.updateSize());
     }
 
     componentWillReceiveProps(nextProps) {
@@ -65,6 +65,7 @@ class PlayerWaveForm extends React.Component {
         if (this.props.isPlaying) {
             this.timer = setInterval(this.draw.bind(this), 100)
         }
+        this.updateSize();
     }
 
     render() {
@@ -236,11 +237,23 @@ class PlayerWaveForm extends React.Component {
     }
 
     updateSize() {
+        const display = this.refs.canvas.style.display;
+        this.refs.canvas.style.display = 'none';
         this.width = ReactDOM.findDOMNode(this).offsetWidth;
         this.height = ReactDOM.findDOMNode(this).offsetHeight;
         this.offsetY = Math.round(this.height * (1 - this.reflection));
         this.wavesCount = Math.round(this.width / (this.waveWidth + this.gutterWidth));
+        this.calculateWaves();
+        this.refs.canvas.setAttribute('width', this.width);
+        this.refs.canvas.style.display = display;
+        this.draw();
     }
+
+    calculateWaves() {
+        let waveform = this.props.tracks.length && this.props.tracks[this.props.index].waveform;
+        this.waves = this.interpolateWaveform(waveform);
+    }
+
     onMouseOver(e) {
         // console.log(e.clientX);
     }

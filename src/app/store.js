@@ -12,6 +12,7 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+    console.log('dispatch ', action.type);
     switch (action.type) {
         case 'PLAYBACK_START':
             store.getState().player.play({playlistIndex: action.index});
@@ -29,6 +30,8 @@ const reducer = (state, action) => {
             return {...state, index: action.index};
         case 'SET_TRACKS':
             return {...state, tracks: action.tracks};
+        case 'ADD_TRACKS':
+            return {...state, tracks: state.tracks.concat(action.tracks)};
         case 'SET_TRACK_WAVEFORM':
             return {
                 ...state,
@@ -73,11 +76,12 @@ export function actionSetPlayer(player) {
 }
 
 /**
- * Fetch waveform data for track if it not fetched yet and start playback
- * @param index
+ * Set current track and fetch waveform data for track if it not fetched yet
+ * @param index Track index
+ * @param play Start playback after track ready 
  * @returns {*}
  */
-export function actionSetTrack(index) {
+export function actionSetTrack(index, play = true) {
 
     return function (dispatch, getState) {
         let track = getState().tracks[index];
@@ -102,14 +106,19 @@ export function actionSetTrack(index) {
                 })
         }
         dispatch(actionFetchTrackWaveform(index, promise));
-        return promise
-            .then(() => dispatch(actionPlay({index: index})));
+        
+        if (play) {
+            promise.then(() => dispatch(actionPlay({index: index})));
+        }
+        return promise;
     };
 }
 export function actionSetTracks(tracks) {
     return {type: 'SET_TRACKS', tracks: tracks}
 }
-
+export function actionAddTracks(tracks) {
+    return {type: 'ADD_TRACKS', tracks: tracks}
+}
 export function actionSetTrackWaveform(index, data) {
     return {type: 'SET_TRACK_WAVEFORM', index: index, data: data}
 }
