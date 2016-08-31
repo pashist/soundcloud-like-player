@@ -1,3 +1,4 @@
+import SC from 'soundcloud';
 import SoundCloudAudio from 'soundcloud-audio';
 import {merge} from 'lodash';
 
@@ -13,6 +14,7 @@ import store, {
     actionSetTrack,
     actionNext,
     actionSetPlayer,
+    actionSetApi,
     actionAddTracks,
     actionSetOptions
 } from './app/store';
@@ -22,10 +24,23 @@ export default class SoundCloudLikePlayer {
     constructor(opts) {
         this.options = this.parseOptions(opts);
         this.player = new SoundCloudAudio(this.options.clientId);
+        this.api = window.SC = SC;
+        
+        SC.connect2 = () => SC.connect().then(result => {
+            localStorage.setItem('SC_OAUTH_TOKEN', result.oauth_token);
+            return result;
+        });
+
+        SC.initialize({
+            client_id: this.options.clientId,
+            redirect_uri: this.options.redirectUri,
+            oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
+        });
         
         store.dispatch(actionSetPlayer(this.player));
         store.dispatch(actionSetOptions(this.options));
-        
+        store.dispatch(actionSetApi(this.api));
+
         this.app = ReactDOM.render(
             <Provider store={store}><App id={this.options.id}/></Provider>, this.options.container
         );

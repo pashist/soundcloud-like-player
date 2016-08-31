@@ -14,6 +14,7 @@ import SoundCloudLikePlayer from 'soundcloud-like-player';
 let player = new SoundCloudLikePlayer({
     container: document.getElementById('example'),
     clientId: 'cf92370f6c9691fab24bdf6791b57d61',
+    redirectUri: 'http://localhost:3001/callback.html',
     autoplay: true
 });
 player.on('ended', () => player.next());
@@ -24,5 +25,8 @@ player.resolve('http://soundcloud.com/jxnblk/sets/yello');
 player.search({q: 'buskers', limit: 20, offset: 10})
 ```
 see https://developers.soundcloud.com/docs/api/guide#search for more search options
+
+**NOTE You should use your correct clientId and redirectUri params for features, requiring authentication (e.g. like button). 
+See https://developers.soundcloud.com/docs/api/sdks#authentication for details.**
 ## API
 Coming soon...

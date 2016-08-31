@@ -5,20 +5,24 @@ export default class PlayerButton extends React.Component {
         let gradientStart = this.props.color.fill[0] || this.props.fill;
         let gradientStop = this.props.color.fill[1] || this.props.fill;
         return (
-            <div className="button" onClick={this.props.onClick}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 43 43">
-                    <defs>
-                        <linearGradient id="scpPlayButtonGradient" x1="0%" y1="0%" x2="0%" y2="100%" spreadMethod="pad">
-                            <stop offset="0%" stopColor={gradientStart} stopOpacity="1"/>
-                            <stop offset="100%" stopColor={gradientStop} stopOpacity="1"/>
-                        </linearGradient>
-                    </defs>
-                    <circle fill="url(#scpPlayButtonGradient)" stroke={this.props.color.stroke} cx="21.5" cy="21.5" r="21"/>
-                    <circle className="scpPlayButtonOverlay" fill="#000" fillOpacity="0.08"
-                            stroke={this.props.color.stroke} cx="21.5" cy="21.5" r="21"/>
-                    { this.props.isPlaying ? this.drawPause() : this.drawPlay() }
+            <div className="play-button-wrapper">
+                <div className="play-button" onClick={this.props.onClick}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 43 43">
+                        <defs>
+                            <linearGradient id="scpPlayButtonGradient" x1="0%" y1="0%" x2="0%" y2="100%"
+                                            spreadMethod="pad">
+                                <stop offset="0%" stopColor={gradientStart} stopOpacity="1"/>
+                                <stop offset="100%" stopColor={gradientStop} stopOpacity="1"/>
+                            </linearGradient>
+                        </defs>
+                        <circle fill="url(#scpPlayButtonGradient)" stroke={this.props.color.stroke} cx="21.5" cy="21.5"
+                                r="21"/>
+                        <circle className="scpPlayButtonOverlay" fill="#000" fillOpacity="0.08"
+                                stroke={this.props.color.stroke} cx="21.5" cy="21.5" r="21"/>
+                        { this.props.isPlaying ? this.drawPause() : this.drawPlay() }
 
-                </svg>
+                    </svg>
+                </div>
             </div>
         )
     }

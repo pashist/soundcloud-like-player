@@ -24,7 +24,6 @@ class PlayerWaveForm extends React.Component {
         this.active = 0;
         this.selected = 0;
         this.timer = null;
-        this.handleClick = this.handleClick.bind(this);
         this.addColors();
 
         window.requestAnimFrame = (function () {
@@ -37,12 +36,6 @@ class PlayerWaveForm extends React.Component {
                     window.setTimeout(callback, 1000 / 30);
                 }
         })();
-    }
-
-    handleClick() {
-        this.setState({
-            color: 'blue'
-        });
     }
 
     componentDidMount() {
@@ -178,8 +171,8 @@ class PlayerWaveForm extends React.Component {
         }
 
         //draw time
-        this.drawTime('currentTime', this.secToMin(this.props.player.audio.currentTime));
-        this.drawTime('duration', this.secToMin(this.props.player.audio.duration));
+        this.drawTime('currentTime', this.secToMin(this.getCurrentTime()));
+        this.drawTime('duration', this.secToMin(this.getDuration()));
     }
     
     drawTime(type, time) {
@@ -282,8 +275,8 @@ class PlayerWaveForm extends React.Component {
     }
 
     getWaveIndexByTime() {
-        let duration = this.props.player.audio.duration;
-        let time = this.props.player.audio.currentTime;
+        let duration = this.getDuration();
+        let time = this.getCurrentTime();
         if (this.props.player) {
             return Math.ceil(time / duration * this.waves.length)
         } else {
@@ -292,7 +285,7 @@ class PlayerWaveForm extends React.Component {
     }
 
     getTrackTimeByCoords(e) {
-        let duration = this.props.player.audio.duration;
+        let duration = this.getDuration();
         let x = e.clientX - ReactDOM.findDOMNode(this).offsetLeft;
         let index = Math.floor(x / this.width * duration);
         return index || 0;
@@ -304,6 +297,20 @@ class PlayerWaveForm extends React.Component {
         var seconds = "0" + Math.floor(_time - minutes * 60);
         return minutes + "." + seconds.substr(-2);
     };
+    getDuration(){
+       try {
+           return this.props.player.audio.duration;
+       } catch(e) {
+           return null;
+       }
+    }
+    getCurrentTime(){
+        try {
+            return this.props.player.audio.currentTime;
+        } catch(e) {
+            return null;
+        }
+    }
 }
 
 export default connect(state => state)(PlayerWaveForm);

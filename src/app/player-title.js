@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 
 export default class PlayerTitle extends React.Component {
     componentDidMount() {
-        window.addEventListener('resize', () => this.updateSize());
-        this.updateSize();
+        //  window.addEventListener('resize', () => this.updateSize());
+        //  this.updateSize();
     }
 
     render() {
@@ -13,13 +13,15 @@ export default class PlayerTitle extends React.Component {
         let trackTitle = this.props.track ? this.props.track.title : '';
         let trackUrl = this.props.track ? this.props.track.permalink_url : '';
         return (
-            <div className="title">
-                <div className="title-content" ref="titleContent">
-                    <div className="user-link" >
-                        {userUrl ? <a target="_blank" href={userUrl}>{username}</a> : username}
-                    </div>
-                    <div className="track-link">
-                        {trackUrl ? <a target="_blank" href={trackUrl}>{trackTitle}</a> : trackTitle}
+            <div className="title-wrapper">
+                <div className="title">
+                    <div className="title-content" ref="titleContent">
+                        <div className="user-link">
+                            {userUrl ? <a target="_blank" href={userUrl}>{username}</a> : username}
+                        </div>
+                        <div className="track-link">
+                            {trackUrl ? <a target="_blank" href={trackUrl}>{trackTitle}</a> : trackTitle}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -5,16 +5,18 @@ import {Promise} from 'es6-promise';
 
 const initialState = {
     isPlaying: false,
+    isFetching: false,
     currentTime: 0,
     index: 0,
     tracks: [],
-    player: null
+    player: null,
+    likes: {}
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'PLAYBACK_START':
-            store.getState().player.play({playlistIndex: action.index});
+            state.player.play({playlistIndex: action.index});
             return {...state, isPlaying: true, index: action.index};
         case 'PLAYBACK_PAUSE':
             store.getState().player.pause();
@@ -45,8 +47,19 @@ const reducer = (state, action) => {
             };
         case 'SET_PLAYER':
             return {...state, player: action.player};
+        case 'SET_API':
+            return {...state, api: action.api};
         case 'SET_OPTIONS':
             return {...state, options: action.options};
+        case 'LIKE_TRACK':
+            return {...state, likes: {...state.likes, [action.trackId]: {isFetching: false, value: true}}};
+        case 'UNLIKE_TRACK':
+            return {...state, likes: {...state.likes, [action.trackId]: {isFetching: false, value: false}}};
+        case 'LIKE_TRACK_STATUS_REQUEST':
+            return {
+                ...state,
+                likes: {...state.likes, [action.trackId]: {isFetching: true, value: false, promise: action.promise}}
+            };
         default:
             return state;
     }
@@ -75,13 +88,16 @@ export function actionStop() {
 export function actionSetPlayer(player) {
     return {type: 'SET_PLAYER', player: player}
 }
+export function actionSetApi(api) {
+    return {type: 'SET_API', api: api}
+}
 export function actionSetOptions(options) {
     return {type: 'SET_OPTIONS', options: options}
 }
 /**
  * Set current track and fetch waveform data for track if it not fetched yet
  * @param index Track index
- * @param play Start playback after track ready 
+ * @param play Start playback after track ready
  * @returns {*}
  */
 export function actionSetTrack(index, play = true) {
@@ -109,7 +125,7 @@ export function actionSetTrack(index, play = true) {
                 })
         }
         dispatch(actionFetchTrackWaveform(index, promise));
-        
+
         if (play) {
             promise.then(() => dispatch(actionPlay({index: index})));
         }
@@ -134,6 +150,48 @@ export function actionSetTrackCurrentTime(time) {
     return {type: 'SET_TRACK_CURRENT_TIME', time: time}
 }
 
+export function actionTrackLikeRequest(trackId) {
+    return function (dispatch, getState) {
+        let state = getState();
+        return state.api.connect2()
+            .then(() => state.api.put('/me/favorites/' + trackId))
+            .then(() => dispatch(actionLikeTrack(trackId)))
+            .catch(err => console.log('like track err:', err));
+    };
+}
+export function actionTrackUnlikeRequest(trackId) {
+    return function (dispatch, getState) {
+        let state = getState();
+        return state.api.connect2()
+            .then(() => state.api.delete('/me/favorites/' + trackId))
+            .then(() => dispatch(actionUnlikeTrack(trackId)))
+            .catch(err => console.log('unlike track err:', err));
+    };
+}
+export function actionTrackLikeStatusRequest(trackId) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let promise;
+        if (!state.api.isConnected()) return Promise.resolve();
+        if (state.likes[trackId] && state.likes[trackId].isFetching) {
+            promise = state.likes[trackId].promise;
+        } else {
+            promise = state.api.connect2()
+                .then(() => state.api.get('/me/favorites/' + trackId))
+                .then(() => dispatch(actionLikeTrack(trackId)))
+                .catch(err => dispatch(actionUnlikeTrack(trackId)));
+            dispatch({type: 'LIKE_TRACK_STATUS_REQUEST', trackId: trackId, promise: promise});
+        }
+        return promise;
+    };
+}
+
+export function actionLikeTrack(trackId) {
+    return {type: 'LIKE_TRACK', trackId: trackId}
+}
+export function actionUnlikeTrack(trackId) {
+    return {type: 'UNLIKE_TRACK', trackId: trackId}
+}
 function fetchWaveform(index) {
     let track = store.getState().tracks[index];
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');
