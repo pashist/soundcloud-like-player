@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PlayerArtwork from './player-artwork';
 import PlayerButton from './player-button';
 import PlayerTitle from './player-title';
@@ -22,8 +23,6 @@ export default class Player extends React.Component {
                                       isPlaying={this.props.isPlaying} onClick={this.togglePlayback.bind(this)}/>
                         <MediaButtons />
                         <PlayerTitle track={track}/>
-
-
                     </div>
                     <PlayerWaveForm
                         onSeek={this.onSeek.bind(this)}

@@ -9,5 +9,5 @@ let player = new SoundCloudLikePlayer({
     redirectUri: 'http://localhost:3001/callback.html'
 });
 player.on('ended', () => player.next());
-player.resolve('http://soundcloud.com/jxnblk/sets/yello');
-//player.search({q: 'buskers', limit: 20, offset: 10});
+//player.resolve('https://soundcloud.com/jxnblk/sets/march-on');
+player.search({q: 'buskers', limit: 20, offset: 10});

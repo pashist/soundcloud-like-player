@@ -42,7 +42,7 @@ export default class SoundCloudLikePlayer {
         store.dispatch(actionSetApi(this.api));
 
         this.app = ReactDOM.render(
-            <Provider store={store}><App id={this.options.id}/></Provider>, this.options.container
+            <Provider store={store}><App options={this.options} /></Provider>, this.options.container
         );
 
     }
@@ -61,7 +61,7 @@ export default class SoundCloudLikePlayer {
                 }
             },
             width: 'auto',
-            height: 'auto'
+            height: null
         };
     }
     
@@ -76,6 +76,9 @@ export default class SoundCloudLikePlayer {
         }
         if (!options.clientId) {
             throw new Error('Parameter `clientId` required');
+        }
+        if (!options.height) {
+            options.height = options.container.offsetHeight
         }
         return options;
     }
