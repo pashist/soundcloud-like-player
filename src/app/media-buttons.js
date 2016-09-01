@@ -9,9 +9,9 @@ class MediaButtons extends React.Component {
         return (
             <div className="media-buttons-wrapper">
                 <div className="media-buttons">
-                    <MediaButtonLike />
-                    <MediaButtonDownload />
-                    <MediaButtonBuy />
+                    {this.props.options.showLikeButton ? <MediaButtonLike /> : ''}
+                    {this.props.options.showDownloadButton ? <MediaButtonDownload /> : ''}
+                    {this.props.options.showBuyButton ? <MediaButtonBuy /> : ''}
                 </div>
             </div>
         )

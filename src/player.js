@@ -61,7 +61,10 @@ export default class SoundCloudLikePlayer {
                 }
             },
             width: 'auto',
-            height: null
+            height: null,
+            showLikeButton: true,
+            showDownloadButton: true,
+            showBuyButton: true
         };
     }
     
