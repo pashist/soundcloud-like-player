@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Player from './player';
 import Playlist from './playlist';
+import CookiePolicy from './cookie-policy';
 import './styles.css';
 
 export default class App extends React.Component {
@@ -13,6 +14,7 @@ export default class App extends React.Component {
             <div className="scl-player" style={this.props.options.height ? {height: this.props.options.height }: {}}>
                 <Player ref="player"/>
                 <Playlist ref="playlist"/>
+                <CookiePolicy />
             </div>
         )
     }
