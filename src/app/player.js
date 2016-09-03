@@ -16,7 +16,7 @@ class Player extends React.Component {
         if (!this.props.player) return null;
         return (
             <div className="player">
-                <PlayerArtwork track={track} followings={this.props.followings} dispatch={this.props.dispatch}/>
+                <PlayerArtwork track={track} options={this.props.options} />
                 <div className="sound">
                     <div className="sound-header">
                         <PlayerButton color={getProperty(this.props, 'options.colors.playButton')}

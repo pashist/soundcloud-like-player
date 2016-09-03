@@ -1,3 +1,4 @@
+//import SoundCloudLikePlayer from '../dist';
 import SoundCloudLikePlayer from './player';
 
 let player = new SoundCloudLikePlayer({

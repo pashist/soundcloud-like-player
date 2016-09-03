@@ -64,7 +64,8 @@ export default class SoundCloudLikePlayer {
             height: null,
             showLikeButton: true,
             showDownloadButton: true,
-            showBuyButton: true
+            showBuyButton: true,
+            showFollowButton: true
         };
     }
     

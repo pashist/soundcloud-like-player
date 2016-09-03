@@ -8,7 +8,7 @@ export default class PlayerArtwork extends React.Component {
         return (
             <div className="artwork">
                 <div className="image" style={{backgroundImage:`url(${imgUrl})`}}></div>
-                <PlayerArtworkFollow />
+                {this.props.options.showFollowButton ? <PlayerArtworkFollow /> : ''}
             </div>
         )
     }
