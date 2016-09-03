@@ -14,7 +14,7 @@ let config = {
         loaders: [
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(node_modules|dist)/,
                 loader: 'babel',
                 query: {
                     presets: ['es2015', 'react'],
@@ -22,7 +22,8 @@ let config = {
                 }
             },
             {test: /\.html$/, loader: 'raw'},
-            {test: /\.css$/, loaders: ['style', 'css']}
+            {test: /\.css$/, loaders: ['style', 'css']},
+            {test: /\.json$/, loaders: ['json']}
         ]
     },
     resolve: {
@@ -38,7 +39,7 @@ let config = {
 if (process.env.NODE_ENV == 'production') {
     config.entry = './src/player.js';
     config.output.library = 'SoundCloudLikePlayer';
-    config.output.libraryTarget = 'umd';// 'commonjs2';
+    config.output.libraryTarget = 'umd';
     config.plugins.push(
         new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}})
     );

@@ -10,7 +10,14 @@ const initialState = {
     index: 0,
     tracks: [],
     player: null,
-    likes: {}
+    likes: {},
+    followings: {
+        isFetched: false,
+        isFetching: false,
+        error: null,
+        promise: null,
+        data: []
+    }
 };
 
 const reducer = (state, action) => {
@@ -59,6 +66,32 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 likes: {...state.likes, [action.trackId]: {isFetching: true, value: false, promise: action.promise}}
+            };
+        case 'FOLLOW':
+            return {
+                ...state,
+                followings: {
+                    ...state.followings,
+                    data: action.value
+                        ? state.followings.data.concat(action.id)
+                        : state.followings.data.filter(id => id != action.id)
+                }
+            };
+        case 'FETCH_FOLLOWINGS_REQUEST':
+            return {
+                ...state,
+                followings: {...state.followings, isFetching: true, promise: action.promise}
+            };
+        case 'FETCH_FOLLOWINGS_SUCCESS':
+            return {
+                ...state,
+                followings: {...state.followings, isFetching: false, isFetched: true, data: action.data}
+            };
+        case 'FETCH_FOLLOWINGS_ERROR':
+            console.log('FETCH_FOLLOWINGS_ERROR', action.error);
+            return {
+                ...state,
+                followings: {...state.followings, isFetching: false, error: action.error}
             };
         default:
             return state;
@@ -192,6 +225,56 @@ export function actionLikeTrack(trackId) {
 export function actionUnlikeTrack(trackId) {
     return {type: 'UNLIKE_TRACK', trackId: trackId}
 }
+
+export function actionFollowRequest(id, value = true) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let promise = state.api.connect2();
+        value
+            ? promise.then(() => state.api.put('/me/followings/' + id))
+            : promise.then(() => state.api.delete('/me/followings/' + id));
+        promise
+            .then(() => dispatch(actionFollow(id, value)))
+            .catch(err => console.log('follow err:', err));
+    };
+}
+export function actionFetchFollowings() {
+    return function (dispatch, getState) {
+        let state = getState();
+        let promise;
+        if (!state.api.isConnected()) return Promise.resolve();
+        if (state.followings.isFetching) {
+            promise = state.followings.promise;
+        } else {
+            promise = state.api.connect2()
+                .then(() => state.api.get('/me/followings/ids'))
+                .then(data => dispatch(actionFetchFollowingsSuccess(data.collection)))
+                .catch(error => dispatch(actionFetchFollowingsError(error)));
+            dispatch({type: 'FETCH_FOLLOWINGS_REQUEST', promise: promise});
+        }
+        return promise;
+    };
+}
+export function actionFetchFollowingsIfNeeded() {
+    return function (dispatch, getState) {
+        if (getState().followings.isFetched) {
+            return Promise.resolve();
+        } else {
+            dispatch(actionFetchFollowings());
+        }
+    };
+}
+
+export function actionFollow(id, value) {
+    return {type: 'FOLLOW', id: id, value: value}
+}
+export function actionFetchFollowingsSuccess(data) {
+    return {type: 'FETCH_FOLLOWINGS_SUCCESS', data: data}
+}
+export function actionFetchFollowingsError(error) {
+    return {type: 'FETCH_FOLLOWINGS_ERROR', data: error}
+}
+
 function fetchWaveform(index) {
     let track = store.getState().tracks[index];
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');

@@ -10,13 +10,13 @@ import {connect} from 'react-redux';
 import {actionPlay, actionPause, actionToggle, actionSetTrackCurrentTime} from './store';
 import {get as getProperty} from 'lodash'
 
-export default class Player extends React.Component {
+class Player extends React.Component {
     render() {
         let track = this.props.tracks[this.props.index];
         if (!this.props.player) return null;
         return (
             <div className="player">
-                <PlayerArtwork track={track}/>
+                <PlayerArtwork track={track} followings={this.props.followings} dispatch={this.props.dispatch}/>
                 <div className="sound">
                     <div className="sound-header">
                         <PlayerButton color={getProperty(this.props, 'options.colors.playButton')}

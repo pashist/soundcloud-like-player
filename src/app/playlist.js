@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import PlaylistItem from './playlist-item';
 import {actionSetTrack} from './store';
 
-export default class Playlist extends React.Component {
+class Playlist extends React.Component {
     render() {
         return (
             <div className="playlist">
