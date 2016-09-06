@@ -16,7 +16,8 @@ import store, {
     actionSetPlayer,
     actionSetApi,
     actionAddTracks,
-    actionSetOptions
+    actionSetOptions,
+    actionUpdateCurrentTime
 } from './app/store';
 
 export default class SoundCloudLikePlayer {
@@ -40,6 +41,8 @@ export default class SoundCloudLikePlayer {
         store.dispatch(actionSetPlayer(this.player));
         store.dispatch(actionSetOptions(this.options));
         store.dispatch(actionSetApi(this.api));
+
+        this.player.on('timeupdate', () => store.dispatch(actionUpdateCurrentTime(this.player.audio.currentTime*1000)));
 
         this.app = ReactDOM.render(
             <Provider store={store}><App options={this.options} /></Provider>, this.options.container
@@ -65,7 +68,8 @@ export default class SoundCloudLikePlayer {
             showLikeButton: true,
             showDownloadButton: true,
             showBuyButton: true,
-            showFollowButton: true
+            showFollowButton: true,
+            showShareButton: true
         };
     }
     

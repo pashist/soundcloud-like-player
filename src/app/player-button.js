@@ -2,6 +2,7 @@ import React from 'react';
 
 export default class PlayerButton extends React.Component {
     render() {
+        if (!this.props.track) return null;
         let gradientStart = this.props.color.fill[0] || this.props.fill;
         let gradientStop = this.props.color.fill[1] || this.props.fill;
         return (

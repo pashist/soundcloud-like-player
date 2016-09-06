@@ -6,20 +6,21 @@ import PlayerTitle from './player-title';
 import MediaButtons from './media-buttons';
 import PlayerWaveForm from './player-waveform';
 import TrackStats from './tracks-stats';
+import SharePanel from './share-panel';
 import {connect} from 'react-redux';
 import {actionPlay, actionPause, actionToggle, actionSetTrackCurrentTime} from './store';
 import {get as getProperty} from 'lodash'
 
 class Player extends React.Component {
     render() {
-        let track = this.props.tracks[this.props.index];
+        let track = this.props.track;
         if (!this.props.player) return null;
         return (
             <div className="player">
                 <PlayerArtwork track={track} options={this.props.options} />
                 <div className="sound">
                     <div className="sound-header">
-                        <PlayerButton color={getProperty(this.props, 'options.colors.playButton')}
+                        <PlayerButton color={getProperty(this.props, 'options.colors.playButton')} track={track}
                                       isPlaying={this.props.isPlaying} onClick={this.togglePlayback.bind(this)}/>
                         <MediaButtons />
                         <PlayerTitle track={track}/>
@@ -31,6 +32,7 @@ class Player extends React.Component {
                     <div className="sound-footer">
                         <TrackStats track={track}/>
                     </div>
+                    <SharePanel />
                 </div>
             </div>
         )
@@ -61,4 +63,9 @@ class Player extends React.Component {
     }
 }
 
-export default connect(state => state)(Player);
+export default connect(state => ({
+    isPlaying: state.isPlaying,
+    track: state.track,
+    options: state.options,
+    player: state.player
+}))(Player);

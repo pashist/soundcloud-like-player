@@ -269,8 +269,10 @@ class PlayerWaveForm extends React.Component {
     }
 
     getWaveIndexByCoords(e) {
-        let x = e.clientX - ReactDOM.findDOMNode(this).offsetLeft;
-        let index = Math.floor(x / (this.waveWidth + this.gutterWidth));
+        let self = ReactDOM.findDOMNode(this);
+        let width = self.offsetWidth;
+        let x = e.clientX - self.getBoundingClientRect().left;
+        let index = Math.floor(x / width * this.wavesCount);
         return index;
     }
 
@@ -286,9 +288,9 @@ class PlayerWaveForm extends React.Component {
 
     getTrackTimeByCoords(e) {
         let duration = this.getDuration();
-        let x = e.clientX - ReactDOM.findDOMNode(this).offsetLeft;
-        let index = Math.floor(x / this.width * duration);
-        return index || 0;
+        let active = this.getWaveIndexByCoords(e);
+        let time = active / this.wavesCount * duration;
+        return time || 0;
     }
 
     secToMin(time) {

@@ -8,5 +8,5 @@ let player = new SoundCloudLikePlayer({
     redirectUri: 'http://localhost:3001/callback.html'
 });
 player.on('ended', () => player.next());
-player.resolve('https://soundcloud.com/jxnblk/sets/march-on');
+player.resolve('https://soundcloud.com/bigbabydram/sets/d-r-a-m-friends');
 //player.search({q: 'buskers', limit: 20, offset: 10});

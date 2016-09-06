@@ -9,6 +9,7 @@ const initialState = {
     currentTime: 0,
     index: 0,
     tracks: [],
+    track: null,
     player: null,
     likes: {},
     followings: {
@@ -17,25 +18,28 @@ const initialState = {
         error: null,
         promise: null,
         data: []
-    }
+    },
+    shareButtonActive: false
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'PLAYBACK_START':
             state.player.play({playlistIndex: action.index});
-            return {...state, isPlaying: true, index: action.index};
+            return {...state, isPlaying: true, index: action.index, track: state.tracks[action.index]};
         case 'PLAYBACK_PAUSE':
-            store.getState().player.pause();
+            state.player.pause();
             return {...state, isPlaying: false};
         case 'PLAYBACK_STOP':
-            store.getState().player.stop();
+            state.player.stop();
             return {...state, isPlaying: false, currentTime: 0};
         case 'SET_TRACK_CURRENT_TIME':
-            store.getState().player.audio.currentTime = action.time;
+            state.player.audio.currentTime = action.time;
+            return {...state, currentTime: action.time};
+        case 'UPDATE_CURRENT_TIME':
             return {...state, currentTime: action.time};
         case 'SET_CURRENT_TRACK':
-            return {...state, index: action.index};
+            return {...state, index: action.index, track: state.tracks[action.index]};
         case 'SET_TRACKS':
             return {...state, tracks: action.tracks};
         case 'ADD_TRACKS':
@@ -93,6 +97,8 @@ const reducer = (state, action) => {
                 ...state,
                 followings: {...state.followings, isFetching: false, error: action.error}
             };
+        case 'TOGGLE_SHARE_BUTTON':
+            return {...state, shareButtonActive: !state.shareButtonActive};
         default:
             return state;
     }
@@ -136,12 +142,14 @@ export function actionSetOptions(options) {
 export function actionSetTrack(index, play = true) {
 
     return function (dispatch, getState) {
+
         let track = getState().tracks[index];
         let promise;
         if (!track) {
             return Promise.reject();
         }
-
+        dispatch(actionSetCurrentTrack(index));
+        
         // no actions if same track selected or it have waveform loaded/pending
         if (index == getState().index && track.waveform) {
             return Promise.resolve();
@@ -165,6 +173,9 @@ export function actionSetTrack(index, play = true) {
         return promise;
     };
 }
+export function actionSetCurrentTrack(index) {
+    return {type: 'SET_CURRENT_TRACK', index: index}
+}
 export function actionSetTracks(tracks) {
     return {type: 'SET_TRACKS', tracks: tracks}
 }
@@ -181,6 +192,9 @@ export function actionFetchTrackWaveform(index, promise) {
 
 export function actionSetTrackCurrentTime(time) {
     return {type: 'SET_TRACK_CURRENT_TIME', time: time}
+}
+export function actionUpdateCurrentTime(time) {
+    return {type: 'UPDATE_CURRENT_TIME', time: time}
 }
 
 export function actionTrackLikeRequest(trackId) {
@@ -273,6 +287,10 @@ export function actionFetchFollowingsSuccess(data) {
 }
 export function actionFetchFollowingsError(error) {
     return {type: 'FETCH_FOLLOWINGS_ERROR', data: error}
+}
+
+export function actionToggleShareButton() {
+    return {type: 'TOGGLE_SHARE_BUTTON'}
 }
 
 function fetchWaveform(index) {

@@ -2,6 +2,7 @@ import React from 'react';
 import MediaButtonLike from './media-button-like';
 import MediaButtonDownload from './media-button-download';
 import MediaButtonBuy from './media-button-buy';
+import MediaButtonShare from './media-button-share';
 import {connect} from 'react-redux';
 
 class MediaButtons extends React.Component {
@@ -12,10 +13,13 @@ class MediaButtons extends React.Component {
                     {this.props.options.showLikeButton ? <MediaButtonLike /> : ''}
                     {this.props.options.showDownloadButton ? <MediaButtonDownload /> : ''}
                     {this.props.options.showBuyButton ? <MediaButtonBuy /> : ''}
+                    {this.props.options.showShareButton ? <MediaButtonShare /> : ''}
                 </div>
             </div>
         )
     }
 }
 
-export default connect(state => state)(MediaButtons);
+export default connect(state => ({
+    options: state.options
+}))(MediaButtons);

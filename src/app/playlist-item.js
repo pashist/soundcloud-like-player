@@ -22,7 +22,7 @@ export default class PlaylistItem extends React.Component {
             <div className={className} onClick={this.props.onClick}>
                 <div className="image">{imgUrl ? <img src={imgUrl} /> : ''}</div>
                 <div className="extra"><TrackStats track={this.props.track}/></div>
-                <div className="content" style={style}>{this.props.track.title}</div>
+                <div className="content" style={style}>{this.props.track.user.username} - {this.props.track.title}</div>
             </div>
         )
     }
