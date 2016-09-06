@@ -8,7 +8,7 @@ export default class TrackStats extends React.Component {
         let value = numscale.scale({value: playback_count, powerOf: 10, maxLen: 5});
         return (
             <div className="track-stats">
-                <span className="playback-count">{value}</span>
+                {this.props.showPlayCount ? <span className="playback-count">{value}</span> : ''}
             </div>
         )
     }

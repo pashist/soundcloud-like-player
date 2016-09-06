@@ -17,16 +17,17 @@ import store, {
     actionSetApi,
     actionAddTracks,
     actionSetOptions,
-    actionUpdateCurrentTime
+    actionUpdateCurrentTime,
+    actionSetPlaylist
 } from './app/store';
 
 export default class SoundCloudLikePlayer {
-    
+
     constructor(opts) {
         this.options = this.parseOptions(opts);
         this.player = new SoundCloudAudio(this.options.clientId);
         this.api = window.SC = SC;
-        
+
         SC.connect2 = () => SC.connect().then(result => {
             localStorage.setItem('SC_OAUTH_TOKEN', result.oauth_token);
             return result;
@@ -37,19 +38,20 @@ export default class SoundCloudLikePlayer {
             redirect_uri: this.options.redirectUri,
             oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
         });
-        
+
         store.dispatch(actionSetPlayer(this.player));
         store.dispatch(actionSetOptions(this.options));
         store.dispatch(actionSetApi(this.api));
 
-        this.player.on('timeupdate', () => store.dispatch(actionUpdateCurrentTime(this.player.audio.currentTime*1000)));
+        this.player.on('timeupdate', () => store.dispatch(actionUpdateCurrentTime(this.player.audio.currentTime * 1000)));
 
         this.app = ReactDOM.render(
-            <Provider store={store}><App options={this.options} /></Provider>, this.options.container
+            <Provider store={store}><App options={this.options}/></Provider>, this.options.container
         );
 
     }
-    get defaults(){
+
+    get defaults() {
         return {
             id: 'scp_' + Math.random(),
             autoplay: false,
@@ -60,7 +62,7 @@ export default class SoundCloudLikePlayer {
                 },
                 playlist: {
                     track: '#333',
-                    trackActive:  '#ff5500'
+                    trackActive: '#ff5500'
                 }
             },
             width: 'auto',
@@ -69,10 +71,11 @@ export default class SoundCloudLikePlayer {
             showDownloadButton: true,
             showBuyButton: true,
             showFollowButton: true,
-            showShareButton: true
+            showShareButton: true,
+            showPlayCount: true
         };
     }
-    
+
     parseOptions(data) {
         let options = merge(this.defaults, data instanceof Object ? data : {});
 
@@ -92,20 +95,15 @@ export default class SoundCloudLikePlayer {
     }
 
     resolve(url) {
-        return new Promise((resolve, reject) => {
-            try {
-                this.player.resolve(url, data => {
-                    let tracks = data instanceof Array
-                        ? data : data.kind == 'playlist'
-                        ? data.tracks : data.kind == 'track'
-                        ? [data] : [];
-                    store.dispatch(actionSetTracks(tracks));
-                    store.dispatch(actionSetTrack(0, this.options.autoplay));
-                    resolve(data);
-                })
-            } catch (err) {
-                reject(err);
-            }
+        return this.player.resolve(url).then(data => {
+            let tracks = data instanceof Array
+                ? data : data.kind == 'playlist'
+                ? data.tracks : data.kind == 'track'
+                ? [data] : [];
+            store.dispatch(actionSetPlaylist(data));
+            store.dispatch(actionSetTracks(tracks));
+            store.dispatch(actionSetTrack(0, store.getState().options.autoplay));
+            return data;
         });
     }
 

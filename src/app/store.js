@@ -12,6 +12,7 @@ const initialState = {
     track: null,
     player: null,
     likes: {},
+    playlist: null,
     followings: {
         isFetched: false,
         isFetching: false,
@@ -42,8 +43,15 @@ const reducer = (state, action) => {
             return {...state, index: action.index, track: state.tracks[action.index]};
         case 'SET_TRACKS':
             return {...state, tracks: action.tracks};
+        case 'SET_PLAYLIST':
+            return {...state, playlist: action.playlist};
         case 'ADD_TRACKS':
             return {...state, tracks: state.tracks.concat(action.tracks)};
+        case 'UPDATE_TRACKS':
+            return {
+                ...state,
+                tracks: state.tracks.map(track => action.tracks.find(_track => _track.id == track.id) || track)
+            };
         case 'SET_TRACK_WAVEFORM':
             return {
                 ...state,
@@ -149,7 +157,7 @@ export function actionSetTrack(index, play = true) {
             return Promise.reject();
         }
         dispatch(actionSetCurrentTrack(index));
-        
+
         // no actions if same track selected or it have waveform loaded/pending
         if (index == getState().index && track.waveform) {
             return Promise.resolve();
@@ -178,6 +186,9 @@ export function actionSetCurrentTrack(index) {
 }
 export function actionSetTracks(tracks) {
     return {type: 'SET_TRACKS', tracks: tracks}
+}
+export function actionSetPlaylist(playlist) {
+    return {type: 'SET_PLAYLIST', playlist: playlist.kind == 'playlist' ? playlist : null}
 }
 export function actionAddTracks(tracks) {
     return {type: 'ADD_TRACKS', tracks: tracks}

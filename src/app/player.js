@@ -30,7 +30,7 @@ class Player extends React.Component {
                         onClick={this.onWaveFormClick.bind(this)}
                     />
                     <div className="sound-footer">
-                        <TrackStats track={track}/>
+                        <TrackStats track={track} showPlayCount={this.props.options.showPlayCount}/>
                     </div>
                     <SharePanel />
                 </div>

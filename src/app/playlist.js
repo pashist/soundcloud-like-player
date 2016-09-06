@@ -15,7 +15,7 @@ class Playlist extends React.Component {
                     contentClassName="content"
                     horizontal={false}>
                     <div>
-                        {this.props.tracks.map((track, i) =>
+                        {this.props.tracks.filter(track => track.user).map((track, i) =>
                             <PlaylistItem
                                 key={i}
                                 isCurrent={i == this.props.index}
@@ -23,6 +23,7 @@ class Playlist extends React.Component {
                                 track={track}
                                 onClick={this.onClick.bind(this, i)}
                                 colors={this.props.options.colors.playlist}
+                                showPlayCount={this.props.options.showPlayCount}
                             />)
                         }
                     </div>
@@ -37,4 +38,8 @@ class Playlist extends React.Component {
 
 }
 
-export default connect(state => state)(Playlist);
+export default connect(state => ({
+    options: state.options,
+    isPlaying: state.isPlaying,
+    tracks: state.tracks
+}))(Playlist);
