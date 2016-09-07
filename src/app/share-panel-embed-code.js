@@ -22,7 +22,7 @@ export default class SharePanelEmbedCode extends React.Component {
 
     buildEmbedCode() {
         return this.props.isEmbedCodeWordpress
-            ? `[soundcloud url="${this.props.uri}" params="color=ff5500" width="100%" height="166" iframe="true" /]`
+            ? `[soundcloud url="${this.props.track.uri}" params="color=ff5500" width="100%" height="166" iframe="true" /]`
             : `<iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${this.props.track.permalink_url}&amp;color=ff5500"></iframe>`
     }
 }
