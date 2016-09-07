@@ -22,7 +22,8 @@ const initialState = {
     },
     shareButtonActive: false,
     isEmbedCodeVisible: false,
-    isEmbedCodeWordpress: false
+    isEmbedCodeWordpress: false,
+    tooltipTarget: null
 };
 
 const reducer = (state, action) => {
@@ -113,6 +114,8 @@ const reducer = (state, action) => {
             return {...state, isEmbedCodeVisible: !state.isEmbedCodeVisible};
         case 'TOGGLE_EMBED_CODE_WP':
             return {...state, isEmbedCodeWordpress: !state.isEmbedCodeWordpress};
+        case 'TOGGLE_TOOLTIP':
+            return {...state, tooltipTarget: action.tooltipTarget || null};
         default:
             return state;
     }
@@ -315,6 +318,10 @@ export function actionToggleEmbedCode() {
 export function actionToggleEmbedCodeWordpress() {
     return {type: 'TOGGLE_EMBED_CODE_WP'}
 }
+export function actionToggleTooltip(target) {
+    return {type: 'TOGGLE_TOOLTIP', target: target || null}
+}
+
 function fetchWaveform(index) {
     let track = store.getState().tracks[index];
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');

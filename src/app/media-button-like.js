@@ -1,8 +1,13 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 import {actionTrackLikeRequest, actionTrackUnlikeRequest, actionTrackLikeStatusRequest} from './store';
 
 class MediaButtonLike extends React.Component {
+
+    componentDidUpdate(){
+        ReactTooltip.rebuild();
+    }
     componentWillReceiveProps(props){
         if (typeof props.likes[props.track.id] === 'undefined') {
             this.props.dispatch(actionTrackLikeStatusRequest(props.track.id));
@@ -15,7 +20,7 @@ class MediaButtonLike extends React.Component {
             className += ' active';
         }
         return (
-            <div className={className} onClick={this.onClick.bind(this)}>
+            <div className={className} onClick={this.onClick.bind(this)} data-tip={this.isLiked() ? 'Liked' : 'Like'}>
 
             </div>
         )

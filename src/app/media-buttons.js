@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
 import MediaButtonLike from './media-button-like';
 import MediaButtonDownload from './media-button-download';
 import MediaButtonBuy from './media-button-buy';
@@ -15,6 +16,7 @@ class MediaButtons extends React.Component {
                     {this.props.options.showBuyButton ? <MediaButtonBuy /> : ''}
                     {this.props.options.showShareButton ? <MediaButtonShare /> : ''}
                 </div>
+                <ReactTooltip effect="solid" class="button-tooltip"/>
             </div>
         )
     }
