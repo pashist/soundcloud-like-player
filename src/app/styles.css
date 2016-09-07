@@ -436,8 +436,10 @@
 }
 .scl-player .share-panel .share-panel-items {
     list-style: none;
-    margin: 0;
-    padding: 7px 0 0 0;
+    padding: 0;
+    height: 32px;
+    margin: 7px 0 14px 0;
+    overflow: hidden;
 }
 .scl-player .share-panel .share-panel-item {
     float: left;
@@ -473,3 +475,59 @@
 .scl-player .share-panel .share-icon.email {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEPklEQVR42u2beWxMURTGa19iizUIQQhCbEFIkPiDSJCIWKqoNdaiqihCUEIEsZSkg5QqERohttpjIkVstaS0sauiOtNVVVv9zMmtfH80sb6Z9565X3IyM+++5Z7fO3PvPefNBIgwOqChx6I95vIY/nNzia/KZzqfIo1+ZiniuwBwcKPfmUMAZPoxALcAgD+bBqABaAAagAagAWgAGsDPbVxV4Ox2IM8FyyvfLX2VPhsI4Mw22E4nNhoIwHkQttO9MwYCGFMBiA0HSopheZWWqrsfWNlAAGMrqddV/QFXGiyr3Exgw1DV16DqBgJ4cAGY1kjeq9eHF2E5pd4EZrdUfZzbGnhxz0AAosw3wPI+jIj4tUDpN1hC53YCQdWkbxIBnK0MBSAqKgT2hXD7usFATgZMU0EOsHV02ThVETi2hjfFCwAoZxwwsZZqm9UCSL0Bn+vlfWB+O9WHqQ2ApARQ3gNAvXkELGiv2gOrAKe3qhHYF7oYzUEuoieQ8QqUbwAwBLeM4n6bR6pt3lJhPrBjPK8XPUN9LQFTAHDePbWF866EpYSn0Up7AoR15hR3NQaUeQCoZCcwoyk7eGkPDFD5MSekDQFbBACV9R5YNYDH7ZoMFH7GX6voi4S5nItTXH4WKOsAoEqKZdksy2c5VsJWhe+fKj0VWNwNXHdEcpC1MADq1nEguI46Prg2kHgUv62b8Tx2akMg6TwoOwDgXeTAJbYv5OejdkkRsH8ho2dZb+DTa1D2AUDJGLBjAs8V0YtOUbKNS20xxyzCsikAKiHqx7m4crt7mu3yXrYx/VbHUDYGcHKTOKQsZgEzNvkct1SMIT+vLRC7iO1yrK0BxK8tf0dzP0kSVf4aG4dzikuIIpT4SJsCOBTBKezyXoBSGduRleKkaj++vvwUd8nBQszhZTYCII7sD6Xzzjj8tZwHCeFAmKXXAXTeMZOldJnP/1WJR1ni3jObECwH4FsJEBUs+6vqzJ1TMEy3TxLC7ilyLcsA4AJmW6Dad0JNVUM0WkkJcm51je1BhGA6gOKvwKYRXPImX4PX9PgKs8LNI+XaJgP4WgCsH6L2mVwPSEmE1/X0OjCpbtnUOUwyRp8DYHVm9UCu7F7chc/07DYwpb66duQgptw+A/A5G1jZT7VNbyL1QXOKotMbSx9UDaIg10cA8lyS0KjtM5sz1zdDacmsQq3oKzfGywByMlikmNMK+PAcpis9hfnFkh7yeMxLANzpQGhHJi1Mac1Xxkt5HKb6Ft4FyP5gKABxlg8hBILAsJoy3/I5RWgHwP3OEAAMd3mV8M/+CAuKRdmwToxSQwCwkmP1n8gw3V7S3eDfCIV35QhrB+W7OV4ZAmB8DXkep1Z+Vpf0UT071D+T0wA0AA1AA9AANAANQAP4FQC3HwPI8/e/zsb++PN0qh86/8pjzQSAWCOPRfvJ1yHLYzFlPgd8B8Wh/eMIOrHIAAAAAElFTkSuQmCC)
 }
+.scl-player .share-panel .share-panel-extra {
+    overflow: hidden;
+    display: block;
+}
+.scl-player .share-panel .input-wrapper input {
+    padding: 2px 4px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    outline: none;
+    width: 100%;
+    line-height: 19px;
+    font-size: 13px;
+}
+.scl-player .share-panel .input-wrapper input:focus {
+    border-color: #999;
+}
+.scl-player .share-panel button {
+    display: inline-block;
+    position: relative;
+    height: 26px;
+    margin: 0;
+    padding: 2px 11px 2px 10px;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+    background-color: #fff;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+    line-height: 20px;
+    white-space: nowrap;
+    font-family: "Interstate", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Garuda, Verdana, Tahoma, sans-serif;
+    font-weight: 100;
+    text-align: center;
+    vertical-align: baseline;
+    outline: none;
+ }
+
+.scl-player .share-panel button:hover {
+    color: #333;
+    outline: 0;
+    border-color: #ccc;
+}
+.scl-player .share-panel .input-wrapper {
+    overflow: hidden;
+    display: block;
+}
+.scl-player .share-panel .right {
+    float: right;
+    margin-left: 10px;
+}
+.scl-player .share-panel .right label {
+    cursor: pointer;
+    font-size: 12px;
+    padding-right: 10px;
+    vertical-align: text-top;
+ }

@@ -20,7 +20,9 @@ const initialState = {
         promise: null,
         data: []
     },
-    shareButtonActive: false
+    shareButtonActive: false,
+    isEmbedCodeVisible: false,
+    isEmbedCodeWordpress: false
 };
 
 const reducer = (state, action) => {
@@ -107,6 +109,10 @@ const reducer = (state, action) => {
             };
         case 'TOGGLE_SHARE_BUTTON':
             return {...state, shareButtonActive: !state.shareButtonActive};
+        case 'TOGGLE_EMBED_CODE':
+            return {...state, isEmbedCodeVisible: !state.isEmbedCodeVisible};
+        case 'TOGGLE_EMBED_CODE_WP':
+            return {...state, isEmbedCodeWordpress: !state.isEmbedCodeWordpress};
         default:
             return state;
     }
@@ -303,7 +309,12 @@ export function actionFetchFollowingsError(error) {
 export function actionToggleShareButton() {
     return {type: 'TOGGLE_SHARE_BUTTON'}
 }
-
+export function actionToggleEmbedCode() {
+    return {type: 'TOGGLE_EMBED_CODE'}
+}
+export function actionToggleEmbedCodeWordpress() {
+    return {type: 'TOGGLE_EMBED_CODE_WP'}
+}
 function fetchWaveform(index) {
     let track = store.getState().tracks[index];
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');

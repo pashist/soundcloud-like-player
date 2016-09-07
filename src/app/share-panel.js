@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import url from 'url';
 import SharePanelItem from './share-panel-item';
 import SharePanelProgressBar from './share-panel-progress-bar';
+import SharePanelExtra from './share-panel-extra';
+
 import {actionToggleShareButton} from './store'
 
 export class SharePanel extends React.Component {
@@ -14,8 +16,9 @@ export class SharePanel extends React.Component {
             <div className={className}>
                 <SharePanelProgressBar />
                 <ul className="share-panel-items">
-                    {links.map(link => <SharePanelItem link={link} key={link.key} />)}
+                    {links.map(link => <SharePanelItem link={link} key={link.key}/>)}
                 </ul>
+                <SharePanelExtra />
             </div>
         )
     }
@@ -98,5 +101,6 @@ export class SharePanel extends React.Component {
 
 export default connect(state => ({
     track: state.track,
-    shareButtonActive: state.shareButtonActive
+    shareButtonActive: state.shareButtonActive,
+    isEmbedCodeVisible: state.isEmbedCodeVisible
 }))(SharePanel);
