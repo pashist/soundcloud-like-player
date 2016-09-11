@@ -58,7 +58,9 @@
 .scl-player .play-button-wrapper {
     float: left;
 }
-
+.scl-player .play-button-wrapper.disabled {
+    opacity: 0.5
+}
 .scl-player .player .play-button {
     position: relative;
     display: inline-block;

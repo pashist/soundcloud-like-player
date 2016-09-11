@@ -14,14 +14,14 @@ import {get as getProperty} from 'lodash'
 class Player extends React.Component {
     render() {
         let track = this.props.track;
-        if (!this.props.player) return null;
         return (
             <div className="player">
                 <PlayerArtwork track={track} options={this.props.options} />
                 <div className="sound">
                     <div className="sound-header">
                         <PlayerButton color={getProperty(this.props, 'options.colors.playButton')} track={track}
-                                      isPlaying={this.props.isPlaying} onClick={this.togglePlayback.bind(this)}/>
+                                      isPlaying={this.props.isPlaying} player={this.props.player}
+                                      onClick={this.togglePlayback.bind(this)}/>
                         <MediaButtons />
                         <PlayerTitle track={track}/>
                     </div>

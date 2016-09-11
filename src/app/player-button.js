@@ -5,9 +5,13 @@ export default class PlayerButton extends React.Component {
         if (!this.props.track) return null;
         let gradientStart = this.props.color.fill[0] || this.props.fill;
         let gradientStop = this.props.color.fill[1] || this.props.fill;
+        let className = 'play-button-wrapper';
+        if (this.isDisabled()) {
+            className += ' disabled'
+        }
         return (
-            <div className="play-button-wrapper">
-                <div className="play-button" onClick={this.props.onClick}>
+            <div className={className}>
+                <div className="play-button" onClick={this.isDisabled() ? null : this.props.onClick}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 43 43">
                         <defs>
                             <linearGradient id="scpPlayButtonGradient" x1="0%" y1="0%" x2="0%" y2="100%"
@@ -39,5 +43,9 @@ export default class PlayerButton extends React.Component {
                 <rect x="23" y="12" width="5" height="19"></rect>
             </g>
         )
+    }
+
+    isDisabled() {
+        return !this.props.player
     }
 }

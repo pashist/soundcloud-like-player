@@ -17,7 +17,6 @@ let player = new SoundCloudLikePlayer({
     redirectUri: 'http://localhost:3001/callback.html',
     autoplay: true
 });
-player.on('ended', () => player.next());
 player.resolve('http://soundcloud.com/jxnblk/sets/yello');
 ```
 #### Tracks search

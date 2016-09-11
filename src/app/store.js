@@ -29,12 +29,15 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-    //console.log(action);
     switch (action.type) {
         case 'PLAYBACK_START':
-            state.player.play();
-           // state.player.play({playlistIndex: action.index});
-            return {...state, isPlaying: true/*, index: action.index, track: state.tracks[action.index]*/};
+            if (state.player) {
+                state.player.play();
+                return {...state, isPlaying: true};
+            } else {
+                alert(`Can't play this track`);
+                return state;
+            }
         case 'PLAYBACK_PAUSE':
             state.player.pause();
             return {...state, isPlaying: false};
@@ -42,7 +45,9 @@ const reducer = (state, action) => {
             state.player.stop();
             return {...state, isPlaying: false, currentTime: 0};
         case 'SET_TRACK_CURRENT_TIME':
-            state.player.seek(action.time);
+            if (state.player) {
+                state.player.seek(action.time);
+            }
             return {...state, currentTime: action.time};
         case 'UPDATE_CURRENT_TIME':
             return {...state, currentTime: action.time};
@@ -157,6 +162,8 @@ export function actionCreatePlayer(startPlayback = false) {
             if (startPlayback) {
                 dispatch(actionPlay());
             }
+        }).catch(err => {
+            dispatch(actionSetPlayer(null));
         })
     }
 }
@@ -196,6 +203,7 @@ export function actionSetTrack(index, play = true) {
 
     return function (dispatch, getState) {
         let state = getState();
+        state.isPlaying && dispatch(actionPause());
         let track = state.tracks[index];
         let promise;
         if (!track) {

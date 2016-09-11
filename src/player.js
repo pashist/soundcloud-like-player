@@ -1,5 +1,4 @@
 import SC from 'soundcloud';
-import SoundCloudAudio from 'soundcloud-audio';
 import {merge} from 'lodash';
 import url from 'url';
 
@@ -14,11 +13,9 @@ import store, {
     actionSetTracks,
     actionSetTrack,
     actionNext,
-    actionSetPlayer,
     actionSetApi,
     actionAddTracks,
     actionSetOptions,
-    actionUpdateCurrentTime,
     actionSetPlaylist
 } from './app/store';
 
@@ -26,7 +23,6 @@ export default class SoundCloudLikePlayer {
 
     constructor(opts) {
         this.options = this.parseOptions(opts);
-        this.player = new SoundCloudAudio(this.options.clientId);
         this.api = window.SC = SC;
         this.api._get = this.get.bind(this);
 
@@ -41,11 +37,9 @@ export default class SoundCloudLikePlayer {
             oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
         });
 
-        store.dispatch(actionSetPlayer(this.player));
         store.dispatch(actionSetOptions(this.options));
         store.dispatch(actionSetApi(this.api));
 
-        this.player.on('timeupdate', () => store.dispatch(actionUpdateCurrentTime(this.player.audio.currentTime * 1000)));
 
         this.app = ReactDOM.render(
             <Provider store={store}><App options={this.options}/></Provider>, this.options.container
@@ -137,10 +131,6 @@ export default class SoundCloudLikePlayer {
 
     next() {
         store.dispatch(actionNext());
-    }
-
-    on(name, callback) {
-        return this.player.on(name, callback)
     }
 
     configure(key, value) {
