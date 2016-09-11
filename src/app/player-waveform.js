@@ -44,8 +44,8 @@ class PlayerWaveForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         //track switched or no waveform for current track
-        if (nextProps.index != this.props.index || !this.waves.length) {
-            let track = nextProps.tracks[nextProps.index];
+        if (nextProps.track != this.props.track || !this.waves.length) {
+            let track = nextProps.track;
             this.waves = this.interpolateWaveform(track && track.waveform);
         }
     }
@@ -171,8 +171,8 @@ class PlayerWaveForm extends React.Component {
         }
 
         //draw time
-        this.drawTime('currentTime', this.secToMin(this.getCurrentTime()));
-        this.drawTime('duration', this.secToMin(this.getDuration()));
+        this.drawTime('currentTime', this.secToMin(this.getCurrentTime() / 1000));
+        this.drawTime('duration', this.secToMin(this.getDuration() / 1000));
     }
     
     drawTime(type, time) {
@@ -243,7 +243,7 @@ class PlayerWaveForm extends React.Component {
     }
 
     calculateWaves() {
-        let waveform = this.props.tracks.length && this.props.tracks[this.props.index].waveform;
+        let waveform = this.props.track && this.props.track.waveform;
         this.waves = this.interpolateWaveform(waveform);
     }
 
@@ -301,18 +301,22 @@ class PlayerWaveForm extends React.Component {
     };
     getDuration(){
        try {
-           return this.props.player.audio.duration;
+           return this.props.track.duration;
        } catch(e) {
            return null;
        }
     }
     getCurrentTime(){
         try {
-            return this.props.player.audio.currentTime;
+            return this.props.player.audio ? this.props.player.audio.currentTime : this.props.player.currentTime();
         } catch(e) {
             return null;
         }
     }
 }
 
-export default connect(state => state)(PlayerWaveForm);
+export default connect(state => ({
+    player: state.player,
+    track: state.track,
+    isPlaying: state.isPlaying
+}))(PlayerWaveForm);

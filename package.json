@@ -1,6 +1,6 @@
 {
   "name": "soundcloud-like-player",
-  "version": "0.1.12",
+  "version": "0.2.1",
   "scripts": {
     "build": "webpack --progress",
     "build:prod": "set NODE_ENV=production&&webpack -p --progress",
@@ -35,7 +35,7 @@
     "react-tooltip": "^3.1.7",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
-    "sass-loader": "^4.0.0",
+    "sass-loader": "^4.0.2",
     "soundcloud": "^3.1.2",
     "soundcloud-audio": "github:pashist/soundcloud-audio.js",
     "style-loader": "^0.13.1",

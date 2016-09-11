@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 
 class MediaButtons extends React.Component {
     render() {
+        if (!this.props.track) return null;
         return (
             <div className="media-buttons-wrapper">
                 <div className="media-buttons">
@@ -23,5 +24,6 @@ class MediaButtons extends React.Component {
 }
 
 export default connect(state => ({
-    options: state.options
+    options: state.options,
+    track: state.track
 }))(MediaButtons);

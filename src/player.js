@@ -1,6 +1,7 @@
 import SC from 'soundcloud';
 import SoundCloudAudio from 'soundcloud-audio';
 import {merge} from 'lodash';
+import url from 'url';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -27,6 +28,7 @@ export default class SoundCloudLikePlayer {
         this.options = this.parseOptions(opts);
         this.player = new SoundCloudAudio(this.options.clientId);
         this.api = window.SC = SC;
+        this.api._get = this.get.bind(this);
 
         SC.connect2 = () => SC.connect().then(result => {
             localStorage.setItem('SC_OAUTH_TOKEN', result.oauth_token);
@@ -95,7 +97,7 @@ export default class SoundCloudLikePlayer {
     }
 
     resolve(url) {
-        return this.player.resolve(url).then(data => {
+        return this.get('/resolve', {url:url}).then(data => {
             let tracks = data instanceof Array
                 ? data : data.kind == 'playlist'
                 ? data.tracks : data.kind == 'track'
@@ -108,7 +110,7 @@ export default class SoundCloudLikePlayer {
     }
 
     search(params, clear = true) {
-        return this.player.search(params, clear)
+        return this.get('/tracks', params)
             .then(data => {
                 let tracks = data instanceof Array ? data : [];
                 if (clear) {
@@ -146,4 +148,21 @@ export default class SoundCloudLikePlayer {
         return this;
     }
 
+    get(path, params) {
+        if (this.options.apiUrl) {
+            let fetchUrl = this._appendQueryParams(
+                this.options.apiUrl + path, 
+                Object.assign(params, {client_id: this.options.clientId})
+            );
+            return fetch(fetchUrl).then(response => response.json())
+        } else {
+            return this.api.get(path, params)
+        }
+    }
+
+    _appendQueryParams(_url, params = {}) {
+        let parsed = url.parse(_url, true);
+        parsed.query = Object.assign(parsed.query, params);
+        return url.format(parsed);
+    }
 }

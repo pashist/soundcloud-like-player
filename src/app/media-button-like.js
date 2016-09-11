@@ -39,6 +39,6 @@ class MediaButtonLike extends React.Component {
 }
 
 export default connect(state => ({
-    track: state.tracks[state.index],
+    track: state.track,
     likes: state.likes
 }))(MediaButtonLike);

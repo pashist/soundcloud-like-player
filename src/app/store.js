@@ -5,9 +5,11 @@ import {Promise} from 'es6-promise';
 
 const initialState = {
     isPlaying: false,
-    isFetching: false,
+    isFetching: false,  // track loading
+    promise: null,      // track loading
     currentTime: 0,
     index: 0,
+    error: null,
     tracks: [],
     track: null,
     player: null,
@@ -27,10 +29,12 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+    //console.log(action);
     switch (action.type) {
         case 'PLAYBACK_START':
-            state.player.play({playlistIndex: action.index});
-            return {...state, isPlaying: true, index: action.index, track: state.tracks[action.index]};
+            state.player.play();
+           // state.player.play({playlistIndex: action.index});
+            return {...state, isPlaying: true/*, index: action.index, track: state.tracks[action.index]*/};
         case 'PLAYBACK_PAUSE':
             state.player.pause();
             return {...state, isPlaying: false};
@@ -38,7 +42,7 @@ const reducer = (state, action) => {
             state.player.stop();
             return {...state, isPlaying: false, currentTime: 0};
         case 'SET_TRACK_CURRENT_TIME':
-            state.player.audio.currentTime = action.time;
+            state.player.seek(action.time);
             return {...state, currentTime: action.time};
         case 'UPDATE_CURRENT_TIME':
             return {...state, currentTime: action.time};
@@ -58,7 +62,8 @@ const reducer = (state, action) => {
         case 'SET_TRACK_WAVEFORM':
             return {
                 ...state,
-                tracks: state.tracks.map((track, i) => action.index == i ? {...track, waveform: action.data} : track)
+                tracks: state.tracks.map((track, i) => action.index == i ? {...track, waveform: action.data} : track),
+                track: {...state.track, waveform: action.data}
             };
         case 'FETCH_TRACK_WAVEFORM':
             return {
@@ -108,6 +113,22 @@ const reducer = (state, action) => {
                 ...state,
                 followings: {...state.followings, isFetching: false, error: action.error}
             };
+
+        case 'FETCH_TRACKS_DATA_REQUEST':
+            return {...state, isFetching: true, promise: action.promise};
+        case 'FETCH_TRACKS_DATA_SUCCESS':
+            return {
+                ...state,
+                tracks: state.tracks
+                    .map(track => action.data.find(_track => _track.id == track.id) || track)
+                    .filter(track => action.ids.indexOf(track.id) === -1 || track.user),
+                track: state.tracks[state.index],
+                isFetching: false
+            };
+        case 'FETCH_TRACKS_DATA_ERROR':
+            console.log('FETCH_TRACKS_ERROR', action.error);
+            return {...state, isFetching: false, error: action.error};
+
         case 'TOGGLE_SHARE_BUTTON':
             return {...state, shareButtonActive: !state.shareButtonActive};
         case 'TOGGLE_EMBED_CODE':
@@ -125,8 +146,23 @@ let store = createStore(reducer, initialState, applyMiddleware(thunk));
 
 export default store;
 
-export function actionPlay(args = {}) {
-    return {type: 'PLAYBACK_START', index: isFinite(args.index) ? args.index : store.getState().index};
+export function actionCreatePlayer(startPlayback = false) {
+    return function (dispatch, getState) {
+        return getState().api.stream('/tracks/' + getState().track.id).then(player => {
+            if (player.options.protocols[0] === 'rtmp') {
+                player.options.protocols.splice(0, 1);
+            }
+            player.on('finish', () => dispatch(actionNext()));
+            dispatch(actionSetPlayer(player));
+            if (startPlayback) {
+                dispatch(actionPlay());
+            }
+        })
+    }
+}
+
+export function actionPlay() {
+    return {type: 'PLAYBACK_START'};
 }
 export function actionPause() {
     return {type: 'PLAYBACK_PAUSE'}
@@ -159,23 +195,25 @@ export function actionSetOptions(options) {
 export function actionSetTrack(index, play = true) {
 
     return function (dispatch, getState) {
-
-        let track = getState().tracks[index];
+        let state = getState();
+        let track = state.tracks[index];
         let promise;
         if (!track) {
             return Promise.reject();
         }
+        
         dispatch(actionSetCurrentTrack(index));
-
+        dispatch(actionCreatePlayer(play));
+        
         // no actions if same track selected or it have waveform loaded/pending
-        if (index == getState().index && track.waveform) {
+        if (track.waveform) {
             return Promise.resolve();
         }
         // return promise if track selected pending waveform data
         if (track.waveformPromise) {
             promise = track.waveformPromise
         } else {
-            promise = fetchWaveform(index)
+            promise = fetchWaveform(track)
                 .then(data => dispatch(actionSetTrackWaveform(index, data)))
                 .catch(err => {
                     console.log('fetchWaveform error', err);
@@ -183,10 +221,7 @@ export function actionSetTrack(index, play = true) {
                 })
         }
         dispatch(actionFetchTrackWaveform(index, promise));
-
-        if (play) {
-            promise.then(() => dispatch(actionPlay({index: index})));
-        }
+        
         return promise;
     };
 }
@@ -322,8 +357,44 @@ export function actionToggleTooltip(target) {
     return {type: 'TOGGLE_TOOLTIP', target: target || null}
 }
 
-function fetchWaveform(index) {
-    let track = store.getState().tracks[index];
+export function actionFetchTracksData(ids = []) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let promise;
+        if (!ids.length) return Promise.resolve();
+        if (state.isFetching) {
+            promise = state.promise;
+        } else {
+            let params = {
+                ids: ids.join(','),
+                format: 'json',
+                app_version: 1470821529
+            };
+            if (state.playlist) {
+                params.playlistId = state.playlist.id;
+                params.playlistSecretToken = ''
+            }
+            promise = state.api._get('/tracks', params)
+                .then(data => {
+                    //state.player.mergeTracks(ids.map(id => data.find(track => track.id == id)).filter(track => track));
+                    dispatch(actionFetchTracksDataSuccess(data, ids))
+                })
+                .catch(error => dispatch(actionFetchTracksDataError(error)));
+            dispatch({type: 'FETCH_TRACKS_DATA_REQUEST', promise: promise});
+        }
+        return promise;
+    };
+}
+
+export function actionFetchTracksDataSuccess(data, ids) {
+    return {type: 'FETCH_TRACKS_DATA_SUCCESS', data: data, ids: ids}
+}
+
+export function actionFetchTracksDataError(error) {
+    return {type: 'FETCH_TRACKS_DATA_ERROR', error: error}
+}
+
+function fetchWaveform(track) {
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');
     return fetch(url).then(res => res.json());
 }
