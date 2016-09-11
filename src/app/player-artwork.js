@@ -4,7 +4,7 @@ import PlayerArtworkFollow from './player-artwork-follow';
 export default class PlayerArtwork extends React.Component {
 
     render() {
-        let imgUrl = this.extractImageUrl();
+        let imgUrl = this.getImageUrl();
         return (
             <div className="artwork">
                 <div className="image" style={{backgroundImage:`url(${imgUrl})`}}></div>
@@ -13,12 +13,15 @@ export default class PlayerArtwork extends React.Component {
         )
     }
 
-    extractImageUrl(size = '200x200') {
+    getImageUrl(size = '200x200') {
         const defaultUrl = 'http://a1.sndcdn.com/images/default_artwork_large.png';
-        let artworkUrl;
-        if (this.props.track && this.props.track.artwork_url) {
-            artworkUrl = this.props.track.artwork_url.replace(/large\./, `t${size}.`);
+        let url;
+        if (this.props.track) {
+            url = this.props.track.artwork_url || this.props.track.user.avatar_url;
+            if (url) {
+                url = url.replace(/large\./, `t${size}.`);
+            }
         }
-        return artworkUrl || defaultUrl;
+        return url || defaultUrl;
     }
 }

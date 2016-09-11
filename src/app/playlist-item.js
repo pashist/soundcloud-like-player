@@ -9,7 +9,7 @@ export default class PlaylistItem extends React.Component {
             props.isCurrent ? 'current' : '',
             props.isPlaying && props.isCurrent ? 'playing' : ''
         ].join(' ');
-        let imgUrl = props.track.artwork_url ? props.track.artwork_url.replace(/large/, 'tiny') : '';
+        let imgUrl = (props.track.artwork_url || props.track.user.avatar_url || '').replace(/large/, 'tiny');
         let style = {};
         if (props.colors) {
             if (props.isCurrent && props.colors.trackActive) {
