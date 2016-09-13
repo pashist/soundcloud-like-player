@@ -258,7 +258,7 @@
     border-bottom: none;
 }
 
-.scl-player .playlist .track.current {
+.scl-player .playlist .track.active {
     color: #ff5500;
 }
 

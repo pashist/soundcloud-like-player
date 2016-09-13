@@ -5,6 +5,7 @@ import {Promise} from 'es6-promise';
 
 const initialState = {
     isPlaying: false,
+    isPlayed: false, // once playback was started
     isFetching: false,  // track loading
     promise: null,      // track loading
     currentTime: 0,
@@ -35,7 +36,7 @@ const reducer = (state, action) => {
         case 'PLAYBACK_START':
             if (state.player) {
                 state.player.play();
-                return {...state, isPlaying: true};
+                return {...state, isPlaying: true, isPlayed: true};
             } else {
                 alert(`Can't play this track`);
                 return state;

@@ -4,15 +4,12 @@ import ScrollArea from 'react-scrollbar';
 import {connect} from 'react-redux';
 import PlaylistItem from './playlist-item';
 import {actionSetTrack, actionFetchTracksData} from './store';
-import {actionToggle} from "./store";
 
 class Playlist extends React.Component {
     componentDidMount(){
         this.loadTracksIfNeeded();
     }
-    componentDidUpdate(){
-        //this.loadTracksIfNeeded();
-    }
+
     render() {
         return (
             <div className="playlist">
@@ -27,7 +24,8 @@ class Playlist extends React.Component {
                         {this.props.tracks.filter(track => track.user && !track.error).map((track, i) =>
                             <PlaylistItem
                                 key={i}
-                                isCurrent={this.props.track && this.props.track.id == track.id}
+                                isCurrent={this.isCurrent(track)}
+                                isActive={this.isCurrent(track) && this.props.isPlayed}
                                 isPlaying={this.props.isPlaying}
                                 track={track}
                                 onClick={this.onClick.bind(this, i, track)}
@@ -41,6 +39,9 @@ class Playlist extends React.Component {
         )
     }
 
+    isCurrent(track) {
+        return this.props.track && this.props.track.id == track.id
+    }
     onClick(i, track) {
        /* if (track.id == this.props.track.id) {
             this.props.dispatch(actionToggle())
@@ -93,5 +94,6 @@ export default connect(state => ({
     isPlaying: state.isPlaying,
     tracks: state.tracks,
     isFetching: state.isFetching,
-    error: state.error
+    error: state.error,
+    isPlayed: state.isPlayed
 }))(Playlist);
