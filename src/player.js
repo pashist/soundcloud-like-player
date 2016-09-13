@@ -53,6 +53,7 @@ export default class SoundCloudLikePlayer {
         return {
             id: 'scp_' + Math.random(),
             autoplay: false,
+            apiUrl: 'https://api.soundcloud.com',
             colors: {
                 playButton: {
                     fill: ['#ff5500', '#ff2200'],
