@@ -8,7 +8,6 @@ let player = new SoundCloudLikePlayer({
     autoplay: false,
     nativePlayer: true,
     redirectUri: 'http://localhost:3001/callback.html',
-    apiUrl: 'http://52.169.29.134/sc-tpa/api'
     
 });
 
