@@ -308,7 +308,10 @@ class PlayerWaveForm extends React.Component {
     }
     getCurrentTime(){
         try {
-            return this.props.player.audio ? this.props.player.audio.currentTime : this.props.player.currentTime();
+            let time = this.props.player instanceof HTMLAudioElement
+                ? this.props.player.currentTime * 1000
+                : this.props.player.currentTime();
+            return time;
         } catch(e) {
             return null;
         }

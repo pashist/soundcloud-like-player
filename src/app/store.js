@@ -25,7 +25,9 @@ const initialState = {
     shareButtonActive: false,
     isEmbedCodeVisible: false,
     isEmbedCodeWordpress: false,
-    tooltipTarget: null
+    tooltipTarget: null,
+    audio: document.createElement('audio')
+
 };
 
 const reducer = (state, action) => {
@@ -42,11 +44,13 @@ const reducer = (state, action) => {
             state.player.pause();
             return {...state, isPlaying: false};
         case 'PLAYBACK_STOP':
-            state.player.stop();
-            return {...state, isPlaying: false, currentTime: 0};
+            state.player.pause();
+            return {...state, isPlaying: false};
         case 'SET_TRACK_CURRENT_TIME':
             if (state.player) {
-                state.player.seek(action.time);
+                state.options.nativePlayer 
+                    ? state.player.currentTime = action.time / 1000 
+                    : state.player.seek(action.time);
             }
             return {...state, currentTime: action.time};
         case 'UPDATE_CURRENT_TIME':
@@ -153,18 +157,35 @@ export default store;
 
 export function actionCreatePlayer(startPlayback = false) {
     return function (dispatch, getState) {
-        return getState().api.stream('/tracks/' + getState().track.id).then(player => {
-            if (player.options.protocols[0] === 'rtmp') {
-                player.options.protocols.splice(0, 1);
-            }
-            player.on('finish', () => dispatch(actionNext()));
-            dispatch(actionSetPlayer(player));
-            if (startPlayback) {
-                dispatch(actionPlay());
-            }
-        }).catch(err => {
-            dispatch(actionSetPlayer(null));
-        })
+        let state = getState();
+        if (state.options.nativePlayer) {
+            return new Promise((resolve, reject) => {
+                try {
+                    state.audio.src = `https://api.soundcloud.com/tracks/${state.track.id}/stream?client_id=${state.options.playerClientId}`;
+                    state.audio.onended = () => dispatch(actionNext());
+                    dispatch(actionSetPlayer(state.audio));
+                    startPlayback && dispatch(actionPlay());
+                    resolve(true);
+                } catch (err) {
+                    dispatch(actionSetPlayer(null));
+                    reject(err);
+                }
+            })
+        } else {
+            return state.api.stream('/tracks/' + state.track.id + `?client_id=${state.options.playerClientId}`).then(player => {
+                if (player.options.protocols[0] === 'rtmp') {
+                    player.options.protocols.splice(0, 1);
+                }
+                player.on('finish', () => dispatch(actionNext()));
+                dispatch(actionSetPlayer(player));
+                if (startPlayback) {
+                    dispatch(actionPlay());
+                }
+            }).catch(err => {
+                dispatch(actionSetPlayer(null));
+            });
+        }
+
     }
 }
 
@@ -187,8 +208,8 @@ export function actionStop() {
 export function actionSetPlayer(player) {
     return {type: 'SET_PLAYER', player: player}
 }
-export function actionSetApi(api) {
-    return {type: 'SET_API', api: api}
+export function actionSetApi(api, playerApi) {
+    return {type: 'SET_API', api: api, playerApi: playerApi}
 }
 export function actionSetOptions(options) {
     return {type: 'SET_OPTIONS', options: options}
@@ -204,15 +225,18 @@ export function actionSetTrack(index, play = true) {
     return function (dispatch, getState) {
         let state = getState();
         state.isPlaying && dispatch(actionPause());
+        if (index == state.index && state.player) {
+            return Promise.resolve();
+        }
         let track = state.tracks[index];
         let promise;
         if (!track) {
             return Promise.reject();
         }
-        
+
         dispatch(actionSetCurrentTrack(index));
         dispatch(actionCreatePlayer(play));
-        
+
         // no actions if same track selected or it have waveform loaded/pending
         if (track.waveform) {
             return Promise.resolve();
@@ -229,7 +253,7 @@ export function actionSetTrack(index, play = true) {
                 })
         }
         dispatch(actionFetchTrackWaveform(index, promise));
-        
+
         return promise;
     };
 }

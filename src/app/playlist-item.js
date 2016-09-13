@@ -7,7 +7,8 @@ export default class PlaylistItem extends React.Component {
         let className = [
             'track',
             props.isCurrent ? 'current' : '',
-            props.isPlaying && props.isCurrent ? 'playing' : ''
+            props.isPlaying && props.isCurrent ? 'playing' : '',
+            props.track.policy && props.track.policy.toLowerCase()
         ].join(' ');
         let imgUrl = (props.track.artwork_url || props.track.user.avatar_url || '').replace(/large/, 'tiny');
         let style = {};
@@ -19,7 +20,7 @@ export default class PlaylistItem extends React.Component {
             }
         }
         return (
-            <div className={className} onClick={this.props.onClick}>
+            <div className={className} onClick={this.isAllowed() ? this.props.onClick : null}>
                 <div className="image">
                     {imgUrl ? <img src={imgUrl}/> : ''}
                 </div>
@@ -32,5 +33,7 @@ export default class PlaylistItem extends React.Component {
             </div>
         )
     }
-
+    isAllowed(){
+        return this.props.track.policy ? this.props.track.policy == 'ALLOW' : true
+    }
 }

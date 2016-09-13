@@ -32,7 +32,8 @@ let config = {
     plugins: [],
     devServer: {
         historyApiFallback: true,
-        contentBase: './src'
+        contentBase: './src',
+      //  https: true
     }
 };
 

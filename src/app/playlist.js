@@ -4,6 +4,7 @@ import ScrollArea from 'react-scrollbar';
 import {connect} from 'react-redux';
 import PlaylistItem from './playlist-item';
 import {actionSetTrack, actionFetchTracksData} from './store';
+import {actionToggle} from "./store";
 
 class Playlist extends React.Component {
     componentDidMount(){
@@ -16,7 +17,7 @@ class Playlist extends React.Component {
         return (
             <div className="playlist">
                 <ScrollArea
-                    smoothScrolling={true}
+                    smoothScrolling={false}
                     speed={0.8}
                     className="area"
                     contentClassName="content"
@@ -29,7 +30,7 @@ class Playlist extends React.Component {
                                 isCurrent={this.props.track && this.props.track.id == track.id}
                                 isPlaying={this.props.isPlaying}
                                 track={track}
-                                onClick={this.onClick.bind(this, i)}
+                                onClick={this.onClick.bind(this, i, track)}
                                 colors={this.props.options.colors.playlist}
                                 showPlayCount={this.props.options.showPlayCount}
                             />)
@@ -40,8 +41,13 @@ class Playlist extends React.Component {
         )
     }
 
-    onClick(i) {
-        this.props.dispatch(actionSetTrack(i))
+    onClick(i, track) {
+       /* if (track.id == this.props.track.id) {
+            this.props.dispatch(actionToggle())
+        } else {*/
+            this.props.dispatch(actionSetTrack(i))
+        /*}*/
+        
     }
     onScroll(value) {
         if (value.topPosition + value.containerHeight >= value.realHeight) {

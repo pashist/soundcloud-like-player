@@ -245,7 +245,10 @@
     padding: 4px 11px;
     cursor: pointer;
 }
-
+.scl-player .playlist .track.block, .scl-player .playlist .track.snip {
+    opacity: .5;
+    cursor: default;
+}
 .scl-player .playlist .track:first-child {
 
 }

@@ -29,14 +29,16 @@ export default class SoundCloudLikePlayer {
         SC.connect2 = () => SC.connect().then(result => {
             localStorage.setItem('SC_OAUTH_TOKEN', result.oauth_token);
             return result;
+        }).catch(err => {
+            console.log('connect error', err)
         });
 
-        SC.initialize({
+        this.api.initialize({
             client_id: this.options.clientId,
             redirect_uri: this.options.redirectUri,
             oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
         });
-
+        
         store.dispatch(actionSetOptions(this.options));
         store.dispatch(actionSetApi(this.api));
 
@@ -87,11 +89,14 @@ export default class SoundCloudLikePlayer {
         if (!options.height) {
             options.height = options.container.offsetHeight
         }
+        if (!options.playerClientId) {
+            options.playerClientId = options.clientId
+        }
         return options;
     }
 
     resolve(url) {
-        return this.get('/resolve', {url:url}).then(data => {
+        return (this.options.apiUrl ? this.get('/resolve', {url:url}) : this.api.resolve(url)).then(data => {
             let tracks = data instanceof Array
                 ? data : data.kind == 'playlist'
                 ? data.tracks : data.kind == 'track'
@@ -142,7 +147,7 @@ export default class SoundCloudLikePlayer {
         if (this.options.apiUrl) {
             let fetchUrl = this._appendQueryParams(
                 this.options.apiUrl + path, 
-                Object.assign(params, {client_id: this.options.clientId})
+                Object.assign(params, {client_id: this.options.playerClientId})
             );
             return fetch(fetchUrl).then(response => response.json())
         } else {
@@ -154,5 +159,14 @@ export default class SoundCloudLikePlayer {
         let parsed = url.parse(_url, true);
         parsed.query = Object.assign(parsed.query, params);
         return url.format(parsed);
+    }
+
+    clone(obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
     }
 }
