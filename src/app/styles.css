@@ -58,9 +58,11 @@
 .scl-player .play-button-wrapper {
     float: left;
 }
+
 .scl-player .play-button-wrapper.disabled {
     opacity: 0.5
 }
+
 .scl-player .player .play-button {
     position: relative;
     display: inline-block;
@@ -163,13 +165,10 @@
     font-size: 12px;
     color: #999;
     line-height: 12px;
-    padding-left: 16px;
+
     display: inline-block;
     float: right;
-    background-size: 16px 16px;
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3RhdHNfcGxheSA0PC90aXRsZT48cGF0aCBkPSJNNCAxM1YzbDkgNS05IDV6IiBmaWxsPSIjOTk5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);
-    background-repeat: no-repeat;
-    background-position: left center;
+
 }
 
 /* player track title */
@@ -245,10 +244,12 @@
     padding: 4px 11px;
     cursor: pointer;
 }
+
 .scl-player .playlist .track.block, .scl-player .playlist .track.snip {
     opacity: .5;
     cursor: default;
 }
+
 .scl-player .playlist .track:first-child {
 
 }
@@ -593,4 +594,17 @@
     border-right: 6px solid transparent;
     top: -8px;
     margin-left: -6px;
+}
+
+.scl-player .blocked-message {
+    font-size: 11px;
+    padding-left: 15px;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAQAAAAngNWGAAAA9UlEQVR4AX2RRVIFMRCGu2aHc4vZzQrfv9O8K2BrXFPduF7hrXDnAPgVcFhhIQ1V+ce/ePLFKY50ipErfuM3uXK1TspjuIE3xCYDbww3pDSp53MICK63PiHyknYvegEtXiJgIvkRu2lf7aHXDl1rU2s/JsLG0zq0axVVVVN2/ydNQ7wUP6zqIaZouIT4rh1Qof2Fd4gPuMKdWi4XhAeIZ6UrnkFcKT3jihdne8puPdtDgLeL3pG3Kc5sO3/m/Qx/zranf7sPSiz0UZrBQGoZrTYYUJbxVr5NaDfjrZSPCeXJa08mpGK4opfSS3CFypGqilJN9/8CgCaNWkLkLRoAAAAASUVORK5CYII=) left center no-repeat;
+    background-size: 10px 10px;
+}
+
+.scl-player .playback-count {
+    padding-left: 16px;
+    background-size: 16px 16px;
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3RhdHNfcGxheSA0PC90aXRsZT48cGF0aCBkPSJNNCAxM1YzbDkgNS05IDV6IiBmaWxsPSIjOTk5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) no-repeat left center;
 }
