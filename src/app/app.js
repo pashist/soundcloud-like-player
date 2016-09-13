@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import Player from './player';
 import Playlist from './playlist';
 import CookiePolicy from './cookie-policy';
-//import Tooltip from './tooltip';
+
+import './fonts.css';
 import './styles.css';
+
 
 export default class App extends React.Component {
     componentDidMount(){
