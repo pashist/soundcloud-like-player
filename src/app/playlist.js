@@ -11,6 +11,7 @@ class Playlist extends React.Component {
     }
 
     render() {
+        let tracks = this.props.tracks.filter(track => track.user && !track.error);
         return (
             <div className="playlist">
                 <ScrollArea
@@ -21,18 +22,20 @@ class Playlist extends React.Component {
                     horizontal={false}
                     onScroll={this.onScroll.bind(this)}>
                     <div>
-                        {this.props.tracks.filter(track => track.user && !track.error).map((track, i) =>
+                        {tracks.map((track, i) =>
                             <PlaylistItem
                                 key={i}
                                 isCurrent={this.isCurrent(track)}
                                 isActive={this.isCurrent(track) && this.props.isPlayed}
                                 isPlaying={this.props.isPlaying}
+                                isLast={tracks.length == i+1}
                                 track={track}
                                 onClick={this.onClick.bind(this, i, track)}
                                 colors={this.props.options.colors.playlist}
                                 showPlayCount={this.props.options.showPlayCount}
                             />)
                         }
+                        {this.isLastTrackLoaded() ? <div className="playlist-end"></div> : ''}
                     </div>
                 </ScrollArea>
             </div>
@@ -85,7 +88,9 @@ class Playlist extends React.Component {
         }
 
     }
-
+    isLastTrackLoaded() {
+        return this.props.tracks.length && this.props.tracks[this.props.tracks.length-1].title
+    }
 }
 
 export default connect(state => ({

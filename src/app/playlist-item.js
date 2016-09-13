@@ -7,13 +7,15 @@ export default class PlaylistItem extends React.Component {
         let className = [
             'track',
             props.isCurrent ? 'current' : '',
+            props.isActive ? 'active' : '',
             props.isPlaying && props.isCurrent ? 'playing' : '',
-            props.track.policy && props.track.policy.toLowerCase()
+            props.track.policy && props.track.policy.toLowerCase(),
+            props.isLast ? 'last' : ''
         ].join(' ');
         let imgUrl = (props.track.artwork_url || props.track.user.avatar_url || '').replace(/large/, 'tiny');
         let style = {};
         if (props.colors) {
-            if (props.isCurrent && props.colors.trackActive) {
+            if (props.isActive && props.colors.trackActive) {
                 style.color = props.colors.trackActive
             } else if (!props.isCurrent && props.colors.track) {
                 style.color = props.colors.track
