@@ -6,12 +6,11 @@ export default class PlaylistItem extends React.Component {
         let props = this.props;
         let className = [
             'track',
-            props.isCurrent ? 'current' : '',
-            props.isActive ? 'active' : '',
-            props.isPlaying && props.isCurrent ? 'playing' : '',
-            props.track.policy && props.track.policy.toLowerCase(),
-            props.isLast ? 'last' : ''
-        ].join(' ');
+            props.isCurrent && 'current',
+            props.isActive && 'active',
+            props.isPlaying && props.isCurrent && 'playing',
+            props.track.policy && props.track.policy.toLowerCase()
+        ].filter(val => val).join(' ');
         let imgUrl = (props.track.artwork_url || props.track.user.avatar_url || '').replace(/large/, 'tiny');
         let style = {};
         if (props.colors) {
@@ -22,20 +21,23 @@ export default class PlaylistItem extends React.Component {
             }
         }
         return (
-            <div className={className} onClick={this.isAllowed() ? this.props.onClick : null}>
-                <div className="image">
-                    {imgUrl ? <img src={imgUrl}/> : ''}
-                </div>
-                <div className="extra">
-                    <TrackStats track={this.props.track} showPlayCount={this.props.showPlayCount}/>
-                </div>
-                <div className="content" style={style}>
-                    {this.props.track.user.username} - {this.props.track.title}
+            <div className="playlist-item">
+                <div className={className} onClick={this.isAllowed() ? this.props.onClick : null}>
+                    <div className="image">
+                        {imgUrl ? <img src={imgUrl}/> : ''}
+                    </div>
+                    <div className="extra">
+                        <TrackStats track={this.props.track} showPlayCount={this.props.showPlayCount}/>
+                    </div>
+                    <div className="content" style={style}>
+                        {this.props.track.user.username} - {this.props.track.title}
+                    </div>
                 </div>
             </div>
         )
     }
-    isAllowed(){
+
+    isAllowed() {
         return this.props.track.policy ? this.props.track.policy == 'ALLOW' : true
     }
 }

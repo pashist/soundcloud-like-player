@@ -39,7 +39,9 @@ class PlayerWaveForm extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener("resize", () => this.updateSize());
+        window.addEventListener("resize", () => {
+            this.updateSize();
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -104,6 +106,12 @@ class PlayerWaveForm extends React.Component {
     }
 
     drawCanvas() {
+        //const ratio = window.devicePixelRatio;
+        const waveWidth = Math.floor(this.waveWidth/* * ratio*/);
+        const gutterWidth = Math.floor(this.gutterWidth /* ratio*/);
+        const width = Math.floor(width/* * ratio*/);
+        const height = Math.floor(height/* * ratio*/);
+        
         let gutter, xPos, yPos;
 
         xPos = 0;
@@ -112,7 +120,7 @@ class PlayerWaveForm extends React.Component {
         const ctx = this.ctx;
 
         // clear canvas for redraw
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, width, height);
 
         // iterate waves
         for (let i = 0; i < this.waves.length; i += 1) {
@@ -133,7 +141,7 @@ class PlayerWaveForm extends React.Component {
             }
 
             // draw wave
-            this.ctx.fillRect(xPos, yPos, this.waveWidth, -this.waves[i]);
+            this.ctx.fillRect(xPos, yPos, waveWidth, -this.waves[i]);
 
 
             // gutter
@@ -156,7 +164,7 @@ class PlayerWaveForm extends React.Component {
             let gutterHeight = Math.min(this.waves[i], this.waves[i + 1]);
 
             // draw gutter
-            this.ctx.fillRect(xPos + this.waveWidth, yPos, this.gutterWidth, -gutterHeight);
+            this.ctx.fillRect(xPos + waveWidth, yPos, gutterWidth, -gutterHeight);
 
 
             // reflection wave
@@ -165,36 +173,36 @@ class PlayerWaveForm extends React.Component {
                 if (this.active > i) ctx.fillStyle = this.colors['reflection-active'];
                 else this.ctx.fillStyle = this.colors['reflection'];
                 // draw reflection
-                this.ctx.fillRect(xPos, yPos, this.waveWidth, reflectionHeight)
+                this.ctx.fillRect(xPos, yPos, waveWidth, reflectionHeight)
             }
-            xPos += this.waveWidth + this.gutterWidth
+            xPos += waveWidth + gutterWidth
         }
 
         //draw time
         this.drawTime('currentTime', this.secToMin(this.getCurrentTime() / 1000));
         this.drawTime('duration', this.secToMin(this.getDuration() / 1000));
     }
-    
+
     drawTime(type, time) {
         let fontSize = 10;
         let textWidth = this.ctx.measureText(time).width;
         let textColor = type == 'duration' ? 'gray' : 'darkorange';
-        
+
         let bgWidth = textWidth + 4;
         let bgHeight = fontSize + 4;
         let bgX = type == 'duration' ? this.width - textWidth - 4 : 0;
         let bgY = this.offsetY - bgHeight;
-        
+
         let textX = bgX + 2;
         let textY = bgY + fontSize;
-        
+
         this.ctx.fillStyle = '#000000';
         this.ctx.fillRect(bgX, bgY, bgWidth, bgHeight);
         this.ctx.fillStyle = textColor;
         this.ctx.font = `normal ${fontSize}px Arial`;
         this.ctx.fillText(time, textX, textY);
     }
-    
+
     interpolateArray(data, fitCount) {
         let after = undefined;
         let atPoint = undefined;
@@ -237,8 +245,15 @@ class PlayerWaveForm extends React.Component {
         this.offsetY = Math.round(this.height * (1 - this.reflection));
         this.wavesCount = Math.round(this.width / (this.waveWidth + this.gutterWidth));
         this.calculateWaves();
+        this.refs.canvas.removeAttribute('style');
         this.refs.canvas.setAttribute('width', this.width);
         this.refs.canvas.style.display = display;
+        if (window.devicePixelRatio / 2 >= 1) {
+            this.refs.canvas.width = this.width * window.devicePixelRatio;
+            this.refs.canvas.height = this.height * window.devicePixelRatio;
+            this.refs.canvas.setAttribute('style', `width:${this.width}px; height:${this.height}px`);
+            this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
         this.draw();
     }
 
@@ -300,11 +315,11 @@ class PlayerWaveForm extends React.Component {
         return minutes + "." + seconds.substr(-2);
     };
     getDuration(){
-       try {
-           return this.props.track.duration;
-       } catch(e) {
-           return null;
-       }
+        try {
+            return this.props.track.duration;
+        } catch(e) {
+            return null;
+        }
     }
     getCurrentTime(){
         try {

@@ -16,7 +16,8 @@ import store, {
     actionSetApi,
     actionAddTracks,
     actionSetOptions,
-    actionSetPlaylist
+    actionSetPlaylist,
+    actionSetSingle
 } from './app/store';
 
 export default class SoundCloudLikePlayer {
@@ -103,6 +104,7 @@ export default class SoundCloudLikePlayer {
                 ? data.tracks : data.kind == 'track'
                 ? [data] : [];
             store.dispatch(actionSetPlaylist(data));
+            store.dispatch(actionSetSingle(data.kind == 'track'));
             store.dispatch(actionSetTracks(tracks));
             store.dispatch(actionSetTrack(0, store.getState().options.autoplay));
             return data;

@@ -6,6 +6,7 @@ import {Promise} from 'es6-promise';
 const initialState = {
     isPlaying: false,
     isPlayed: false, // once playback was started
+    isSingle: true, //single track
     isFetching: false,  // track loading
     promise: null,      // track loading
     currentTime: 0,
@@ -62,6 +63,8 @@ const reducer = (state, action) => {
             return {...state, tracks: action.tracks};
         case 'SET_PLAYLIST':
             return {...state, playlist: action.playlist};
+        case 'SET_SINGLE':
+        return {...state, isSingle: action.isSingle};
         case 'ADD_TRACKS':
             return {...state, tracks: state.tracks.concat(action.tracks)};
         case 'UPDATE_TRACKS':
@@ -266,6 +269,9 @@ export function actionSetTracks(tracks) {
 }
 export function actionSetPlaylist(playlist) {
     return {type: 'SET_PLAYLIST', playlist: playlist.kind == 'playlist' ? playlist : null}
+}
+export function actionSetSingle(value) {
+    return {type: 'SET_SINGLE', isSingle: value}
 }
 export function actionAddTracks(tracks) {
     return {type: 'ADD_TRACKS', tracks: tracks}
