@@ -228,9 +228,12 @@ export function actionSetTrack(index, play = true) {
 
     return function (dispatch, getState) {
         let state = getState();
-        state.isPlaying && dispatch(actionPause());
+        
         if (index == state.index && state.player) {
+            dispatch(actionToggle());
             return Promise.resolve();
+        } else {
+            state.isPlaying && dispatch(actionPause());
         }
         let track = state.tracks[index];
         let promise;

@@ -4,7 +4,8 @@ import PlayerArtworkFollow from './player-artwork-follow';
 export default class PlayerArtwork extends React.Component {
 
     render() {
-        let imgUrl = this.getImageUrl();
+        let size = window.window.devicePixelRatio > 1 ? '500x500' : '200x200';
+        let imgUrl = this.getImageUrl(size);
         return (
             <div className="artwork">
                 <div className="image" style={{backgroundImage:`url(${imgUrl})`}}></div>
