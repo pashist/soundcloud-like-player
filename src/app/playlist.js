@@ -12,8 +12,9 @@ class Playlist extends React.Component {
 
     render() {
         let tracks = this.props.tracks.filter(track => track.user && !track.error);
+        let className = 'playlist' + (tracks.length == this.props.tracks.length ? ' loaded' : '');
         return (
-            <div className="playlist">
+            <div className={className}>
                 <ScrollArea
                     smoothScrolling={false}
                     speed={0.8}
@@ -35,7 +36,7 @@ class Playlist extends React.Component {
                                 showPlayCount={this.props.options.showPlayCount}
                             />)
                         }
-                        {this.isLastTrackLoaded() ? <div className="playlist-end"></div> : ''}
+                        <div className="playlist-end"></div>
                     </div>
                 </ScrollArea>
             </div>

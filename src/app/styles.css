@@ -618,8 +618,11 @@
     display:inline-block;
     background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+c3RhdHNfcGxheSA0PC90aXRsZT48cGF0aCBkPSJNNCAxM1YzbDkgNS05IDV6IiBmaWxsPSIjOTk5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) no-repeat left center;
 }
-
+.scl-player .playlist.loaded .playlist-end {
+    display: block;
+}
 .scl-player .playlist-end {
+    display: none;
     clear: both;
     height: 31px;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAYCAQAAAAW9LZXAAAB8UlEQVR4AdXVv2ucBRjA8c/73nu5S3LvXS5eEjG09Adt86OhlFDI0C6FkA6FjqUhQ3HSJTjpfyAOLooIjg4RBUdFEnDJ4mAcjEhAcgRzF/HIRfTyG/UQbhO9l3sDDn7geaYHvuPjfy+Q0kbJvBkDDtWsq5Is2pDCTW96IgLAhrd9IkGQKvCq9/3TqiVNXYR69bTr7YJ1YxcLjACY9rEH8v7dpE9l0gfKaqYEnsm6iutyurlvKU0gY1FgXM6IGz4y60WMSvJGmsAtKy4pIFbGS2IUJJk0kxzIWhYCSqgooKiMEUXEkn3mxJGvLOsDIAIw4R1f2Pa698QYNoAiKMojK9llMGfOyx6rAyEIUEHFNW+5axBDCsgro6CAUK/uWJUDQmR9LfACxoxjVD+KcsgroU8Gsd5NeQUIMWHWFRVUVDCsE5BHSYxQeotAhOnODKFfGUOOkRcBiKV3GwhxhlP9GFRGVqwTQEYEBl1QhDpq/gABImdoA9rgXFrfAyH28JMmWn7FuRZO/IY/naDlFKfSWAEiNHzoyD4aQhxoYd/vaDpCyyGaerflAyBE23PsouoADb+gppNUx54d/KhXmxacASGA77xrSx07fkbVLrZV8YNvselzDcmOfeM199S6fbTAvDWBh77EI2vaf9updQL/pb8AB1x11o6S2GUAAAAASUVORK5CYII=) no-repeat 50%;

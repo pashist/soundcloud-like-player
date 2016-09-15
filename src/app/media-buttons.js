@@ -12,7 +12,7 @@ class MediaButtons extends React.Component {
         return (
             <div className="media-buttons-wrapper">
                 <div className="media-buttons">
-                    {this.props.options.showLikeButton ? <MediaButtonLike /> : ''}
+                    {this.props.options.showLikeButton && this.props.isPlayed ? <MediaButtonLike /> : ''}
                     {this.props.options.showDownloadButton ? <MediaButtonDownload /> : ''}
                     {this.props.options.showBuyButton ? <MediaButtonBuy /> : ''}
                     {this.props.options.showShareButton ? <MediaButtonShare /> : ''}
@@ -25,5 +25,6 @@ class MediaButtons extends React.Component {
 
 export default connect(state => ({
     options: state.options,
-    track: state.track
+    track: state.track,
+    isPlayed: state.isPlayed
 }))(MediaButtons);
