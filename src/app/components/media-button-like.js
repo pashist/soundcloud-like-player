@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import ReactTooltip from 'react-tooltip';
-import {actionTrackLikeRequest, actionTrackUnlikeRequest, actionTrackLikeStatusRequest} from './store';
+import * as actions from '../actions';
 
 class MediaButtonLike extends React.Component {
 
@@ -10,7 +10,7 @@ class MediaButtonLike extends React.Component {
     }
     componentWillReceiveProps(props){
         if (typeof props.likes[props.track.id] === 'undefined') {
-            this.props.dispatch(actionTrackLikeStatusRequest(props.track.id));
+            this.props.dispatch(actions.trackLikeStatusRequest(props.track.id));
         }
     }
     render() {
@@ -29,7 +29,7 @@ class MediaButtonLike extends React.Component {
     onClick() {
         let trackId = this.props.track.id;
         this.props.dispatch(
-            this.isLiked() ? actionTrackUnlikeRequest(trackId) : actionTrackLikeRequest(trackId)
+            this.isLiked() ? actions.trackUnlikeRequest(trackId) : actions.trackLikeRequest(trackId)
         );
     }
     

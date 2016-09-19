@@ -18,11 +18,12 @@ let config = {
                 loader: 'babel',
                 query: {
                     presets: ['es2015', 'react'],
-                    plugins: ['transform-object-rest-spread']
+                    plugins: ['transform-object-rest-spread', 'transform-decorators-legacy']
                 }
             },
             {test: /\.html$/, loader: 'raw'},
             {test: /\.css$/, loaders: ['style', 'css']},
+            {test: /\.scss$/, loaders: ["style", "css", "sass"]},
             {test: /\.json$/, loaders: ['json']}
         ]
     },
@@ -33,7 +34,7 @@ let config = {
     devServer: {
         historyApiFallback: true,
         contentBase: './src',
-      //  https: true
+        //  https: true
     }
 };
 

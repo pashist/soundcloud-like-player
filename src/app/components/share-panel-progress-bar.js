@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
-import {actionSetTrackCurrentTime, actionPlay} from './store'
+import * as actions from '../actions';
 
 export class SharePanelProgressBar extends React.Component {
     render() {
@@ -19,10 +19,10 @@ export class SharePanelProgressBar extends React.Component {
             let selfNode = ReactDOM.findDOMNode(this);
             let width = selfNode.offsetWidth;
             let x = e.clientX - selfNode.getBoundingClientRect().left;
-            let time = x / width * this.props.track.duration / 1000;
-            this.props.dispatch(actionSetTrackCurrentTime(time))
+            let time = x / width * this.props.track.duration;
+            this.props.dispatch(actions.setTrackCurrentTime(time))
         } else {
-            this.props.dispatch(actionPlay())
+            this.props.dispatch(actions.play())
         }
     }
 

@@ -6,19 +6,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './app/app';
 import {Provider} from 'react-redux';
-import store, {
-    actionPlay,
-    actionPause,
-    actionStop,
-    actionSetTracks,
-    actionSetTrack,
-    actionNext,
-    actionSetApi,
-    actionAddTracks,
-    actionSetOptions,
-    actionSetPlaylist,
-    actionSetSingle
-} from './app/store';
+import store from './app/store';
+import * as actions from './app/actions';
 
 export default class SoundCloudLikePlayer {
 
@@ -40,8 +29,8 @@ export default class SoundCloudLikePlayer {
             oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
         });
         
-        store.dispatch(actionSetOptions(this.options));
-        store.dispatch(actionSetApi(this.api));
+        store.dispatch(actions.setOptions(this.options));
+        store.dispatch(actions.setApi(this.api));
 
 
         this.app = ReactDOM.render(
@@ -103,10 +92,10 @@ export default class SoundCloudLikePlayer {
                 ? data : data.kind == 'playlist'
                 ? data.tracks : data.kind == 'track'
                 ? [data] : [];
-            store.dispatch(actionSetPlaylist(data));
-            store.dispatch(actionSetSingle(data.kind == 'track'));
-            store.dispatch(actionSetTracks(tracks));
-            store.dispatch(actionSetTrack(0, store.getState().options.autoplay));
+            store.dispatch(actions.setPlaylist(data));
+            store.dispatch(actions.setSingle(data.kind == 'track'));
+            store.dispatch(actions.setTracks(tracks));
+            store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
             return data;
         });
     }
@@ -116,29 +105,29 @@ export default class SoundCloudLikePlayer {
             .then(data => {
                 let tracks = data instanceof Array ? data : [];
                 if (clear) {
-                    store.dispatch(actionSetTracks(tracks));
-                    store.dispatch(actionSetTrack(0, this.options.autoplay));
+                    store.dispatch(actions.setTracks(tracks));
+                    store.dispatch(actions.setTrack(0, this.options.autoplay));
                 } else {
-                    store.dispatch(actionAddTracks(tracks));
+                    store.dispatch(actions.addTracks(tracks));
                 }
                 return data;
             })
     }
 
     play(args) {
-        store.dispatch(actionPlay(args))
+        store.dispatch(actions.play(args))
     }
 
     pause() {
-        store.dispatch(actionPause())
+        store.dispatch(actions.pause())
     }
 
     stop() {
-        store.dispatch(actionStop())
+        store.dispatch(actions.stop())
     }
 
     next() {
-        store.dispatch(actionNext());
+        store.dispatch(actions.next());
     }
 
     configure(key, value) {

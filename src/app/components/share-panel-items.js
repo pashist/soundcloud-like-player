@@ -1,32 +1,17 @@
 import React from 'react';
-import {connect} from 'react-redux';
 import url from 'url';
 import SharePanelItem from './share-panel-item';
-import SharePanelProgressBar from './share-panel-progress-bar';
-import SharePanelExtra from './share-panel-extra';
 
-import {actionToggleShareButton} from './store'
-
-export class SharePanel extends React.Component {
+export default class SharePanelItems extends React.Component {
     render() {
         if (!this.props.track) return null;
-        let className = 'share-panel' + (this.props.shareButtonActive ? ' active' : '');
         let links = this.createLinks(this.props.track);
         return (
-            <div className={className}>
-                <SharePanelProgressBar />
-                <ul className="share-panel-items">
-                    {links.map(link => <SharePanelItem link={link} key={link.key}/>)}
-                </ul>
-                <SharePanelExtra />
-            </div>
+            <ul className="share-panel-items">
+                {links.map(link => <SharePanelItem link={link} key={link.key}/>)}
+            </ul>
         )
     }
-
-    onClick() {
-        this.props.dispatch(actionToggleShareButton())
-    }
-
     createLinks(track) {
         const utm = {
             utm_source: 'soundcloud',
@@ -98,9 +83,3 @@ export class SharePanel extends React.Component {
     }
 
 }
-
-export default connect(state => ({
-    track: state.track,
-    shareButtonActive: state.shareButtonActive,
-    isEmbedCodeVisible: state.isEmbedCodeVisible
-}))(SharePanel);

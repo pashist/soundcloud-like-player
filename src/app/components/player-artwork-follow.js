@@ -1,11 +1,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {actionFollowRequest, actionFetchFollowingsIfNeeded} from './store';
+import * as actions from '../actions';
 
 export class PlayerArtworkFollow extends React.Component {
 
     componentWillReceiveProps() {
-        this.props.dispatch(actionFetchFollowingsIfNeeded());
+        this.props.dispatch(actions.fetchFollowingsIfNeeded());
     }
 
     render() {
@@ -22,7 +22,7 @@ export class PlayerArtworkFollow extends React.Component {
     }
 
     onClick() {
-        this.props.dispatch(actionFollowRequest(this.props.track.user_id, !this.isFollowing()));
+        this.props.dispatch(actions.followRequest(this.props.track.user_id, !this.isFollowing()));
     }
 
     isFollowing() {

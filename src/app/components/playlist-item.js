@@ -2,6 +2,10 @@ import React from 'react';
 import TrackStats from './tracks-stats';
 
 export default class PlaylistItem extends React.Component {
+    constructor(props) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+    }
     render() {
         let props = this.props;
         let className = [
@@ -22,7 +26,7 @@ export default class PlaylistItem extends React.Component {
         }
         return (
             <div className="playlist-item">
-                <div className={className} onClick={this.isAllowed() ? this.props.onClick : null}>
+                <div className={className} onClick={this.onClick}>
                     <div className="image">
                         {imgUrl ? <img src={imgUrl}/> : ''}
                     </div>
@@ -39,5 +43,9 @@ export default class PlaylistItem extends React.Component {
 
     isAllowed() {
         return this.props.track.policy ? this.props.track.policy == 'ALLOW' : true
+    }
+
+    onClick() {
+        this.isAllowed() && this.props.onClick(this.props.index)
     }
 }

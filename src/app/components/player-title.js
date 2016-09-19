@@ -8,19 +8,17 @@ export default class PlayerTitle extends React.Component {
     }
 
     render() {
-        let username = this.props.track ? this.props.track.user.username : '';
-        let userUrl = this.props.track ? this.props.track.user.permalink_url : '';
-        let trackTitle = this.props.track ? this.props.track.title : '';
-        let trackUrl = this.props.track ? this.props.track.permalink_url : '';
+        const track = this.props.data;
+        const user = track.user;
         return (
             <div className="title-wrapper">
                 <div className="title">
                     <div className="title-content" ref="titleContent">
                         <div className="user-link">
-                            {userUrl ? <a target="_blank" href={userUrl}>{username}</a> : username}
+                            <a target="_blank" href={user.permalink_url}>{user.username}</a>
                         </div>
                         <div className="track-link">
-                            {trackUrl ? <a target="_blank" href={trackUrl}>{trackTitle}</a> : trackTitle}
+                            <a target="_blank" href={track.permalink_url}>{track.title}</a>
                         </div>
                     </div>
                 </div>

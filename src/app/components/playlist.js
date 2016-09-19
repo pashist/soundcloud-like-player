@@ -1,0 +1,132 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ScrollArea from 'react-scrollbar';
+import {Scrollbars} from 'react-custom-scrollbars';
+import {connect} from 'react-redux';
+import PlaylistItem from './playlist-item';
+import * as actions from '../actions';
+
+class Playlist extends React.Component {
+    constructor() {
+        super();
+        this.onTrackClick = this.onTrackClick.bind(this);
+        this.onScroll = this.onScroll.bind(this);
+        this.isPlayerHeightChanged = false;
+        this.isTracksLoaded = false;
+    }
+
+    componentDidMount() {
+        this.loadTracksIfNeeded();
+    }
+
+    componentWillReceiveProps(props) {
+        this.isPlayerHeightChanged = props.playlistHeight != this.props.playlistHeight;
+        this.isTracksLoaded = props.tracks != this.props.tracks;
+    }
+    componentDidUpdate(){
+        this.loadTracksIfNeeded();
+    }
+    render() {
+        let tracks = this.props.tracks.filter(track => track.user && !track.error);
+        let className = 'playlist' + (tracks.length == this.props.tracks.length ? ' loaded' : '');
+        return (
+            <div className={className}>
+                <Scrollbars
+                    ref="scrollbars"
+                    onScroll={this.onScroll}
+                    autoHide
+                    style={{height: this.props.playlistHeight}}
+                >
+                    {tracks.map((track, i) =>
+                        <PlaylistItem
+                            key={i}
+                            index={i}
+                            isCurrent={this.isCurrent(track)}
+                            isActive={this.isCurrent(track) && this.props.isPlayed}
+                            isPlaying={this.props.isPlaying}
+                            isLast={tracks.length == i+1}
+                            track={track}
+                            onClick={this.onTrackClick}
+                            colors={this.props.options.colors.playlist}
+                            showPlayCount={this.props.options.showPlayCount}
+                        />)
+                    }
+                    <div className="playlist-end"></div>
+                </Scrollbars>
+            </div>
+        )
+    }
+
+    isCurrent(track) {
+        return this.props.track && this.props.track.id == track.id
+    }
+
+    onTrackClick(i) {
+        this.props.dispatch(actions.setTrack(i));
+    }
+
+    onScroll() {
+
+        let values = this.refs.scrollbars.getValues();
+        if (values.scrollTop + values.clientHeight + 31 >= values.scrollHeight) {
+            this.loadTracks();
+        }
+        if (this.props.options.visual) {
+            if (this.isPlayerHeightChanged) {
+                this.isPlayerHeightChanged = false;
+                return;
+            }
+            const trackHeight = 31;
+            const maxHeight = this.props.options.height - 170;
+            let height = 3 * trackHeight + values.scrollTop * (values.scrollTop / 100);
+            this.props.dispatch(actions.setPlaylistHeight(Math.min(height, maxHeight)));
+        }
+    }
+
+    numTracksToLoad() {
+        const trackHeight = 31; //todo need to calculate
+        const height = ReactDOM.findDOMNode(this).offsetHeight;
+        return Math.floor(height / trackHeight) * 2;
+    }
+
+    idsTracksToLoad() {
+        return this.tracksNotLoaded().slice(0, this.numTracksToLoad()).map(item => item.id);
+    }
+
+    tracksNotLoaded() {
+        return this.props.tracks.filter(track => !track.user && !track.error);
+    }
+
+    tracksLoaded() {
+        return this.props.tracks.filter(track => track.user);
+    }
+
+    loadTracksIfNeeded() {
+        if (!this.isTracksLoaded && this.numTracksToLoad() > this.tracksLoaded().length && this.tracksNotLoaded().length) {
+            this.loadTracks();
+        }
+    }
+
+    loadTracks() {
+        if (!this.props.isFetching && !this.props.error) {
+            let ids = this.idsTracksToLoad();
+            ids.length && this.props.dispatch(actions.fetchTracksData(ids))
+        }
+
+    }
+
+    isLastTrackLoaded() {
+        return this.props.tracks.length && this.props.tracks[this.props.tracks.length - 1].title
+    }
+}
+
+export default connect(state => ({
+    track: state.track,
+    options: state.options,
+    isPlaying: state.isPlaying,
+    tracks: state.tracks,
+    isFetching: state.isFetching,
+    error: state.error,
+    isPlayed: state.isPlayed,
+    playlistHeight: state.playlistHeight
+}))(Playlist);

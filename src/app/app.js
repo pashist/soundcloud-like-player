@@ -1,40 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
-import Player from './player';
-import Playlist from './playlist';
-import CookiePolicy from './cookie-policy';
+import Player from './components/player';
+import PlayerVisual from './components/player-visual';
+import Playlist from './components/playlist';
+import CookiePolicy from './components/cookie-policy';
+import * as actions from './actions';
 
-import './fonts.css';
-import './styles.css';
+import './css/fonts.css';
+import './css/styles.scss';
 
+@connect(state => ({
+    isSingle: state.isSingle,
+    track: state.track
+}))
 
-export class App extends React.Component {
+export default class App extends React.Component {
     componentDidUpdate() {
-        this.setHeight();
+        !this.props.options.visual && this.props.track && this.setHeight();
     }
 
     render() {
-        let style = this.props.options.height && !this.props.isSingle ? {height: this.props.options.height }: {};
+        let style = this.props.options.height && !this.props.isSingle ? {height: this.props.options.height} : {};
+        let className = 'scl-player' + (this.props.options.visual ? ' visual' : '');
         return (
-            <div className="scl-player" style={style}>
-                <Player ref="player"/>
-                {!this.props.isSingle && <Playlist ref="playlist" />}
+            <div className={className} style={style}>
+                {this.props.options.visual && <PlayerVisual ref="player"/>}
+                {!this.props.options.visual && <Player ref="player"/>}
+                {!this.props.isSingle && <Playlist ref="playlist"/>}
                 <CookiePolicy />
             </div>
         )
     }
 
     setHeight() {
-        let height = this.props.options.height;
+        let {height} = this.props.options;
         if (height) {
             let playerHeight = ReactDOM.findDOMNode(this.refs.player).offsetHeight;
             let playlistHeight = height - playerHeight;
-            ReactDOM.findDOMNode(this.refs.playlist).setAttribute('style', `height:${playlistHeight}px`);
-            this.render();
+            this.props.dispatch(actions.setPlaylistHeight(playlistHeight));
         }
     }
 }
-export default connect(state => ({
-    isSingle: state.isSingle
-}))(App);

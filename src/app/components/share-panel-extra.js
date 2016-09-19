@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import SharePanelEmbedCode from './share-panel-embed-code';
 import SharePanelLink from './share-panel-link';
-import {actionToggleEmbedCode, actionToggleEmbedCodeWordpress} from './store';
+import * as actions from '../actions';
 
 export class SharePanelExtra extends React.Component {
     render() {
@@ -21,11 +21,11 @@ export class SharePanelExtra extends React.Component {
     }
 
     onClick(e) {
-        this.props.dispatch(actionToggleEmbedCode())
+        this.props.dispatch(actions.toggleEmbedCode())
     }
 
     toggleWP() {
-        this.props.dispatch(actionToggleEmbedCodeWordpress())
+        this.props.dispatch(actions.toggleEmbedCodeWordpress())
     }
 }
 

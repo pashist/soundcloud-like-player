@@ -8,11 +8,13 @@ let player = new SoundCloudLikePlayer({
     autoplay: false,
     nativePlayer: true,
     redirectUri: 'http://localhost:3001/callback.html',
-    
+    apiUrl: 'http://52.169.29.134/sc-tpa/api',
+    visual: true
 });
 
 /*player.player.configure('_baseUrl', 'http://52.169.29.134/sc-tpa/api');
 player.on('ended', () => player.next());*/
-//player.resolve('https://api.soundcloud.com/playlists/218563529');
-player.resolve('https://soundcloud.com/bigbabydram/sets/d-r-a-m-friends');
+//player.resolve('https://soundcloud.com/kranky/oren-ambarchi-robin-fox');
+//player.resolve('http://api.soundcloud.com/playlists/1595551');
+player.resolve('https://soundcloud.com/user115442976/sets/jammin-inna-concrete-jungle');
 //player.search({q: 'buskers', limit: 20, offset: 10});
