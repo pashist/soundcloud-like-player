@@ -24,7 +24,6 @@ class PlayerWaveForm extends React.Component {
         this.active = 0;
         this.selected = 0;
         this.timer = null;
-        this.addColors();
 
         window.requestAnimFrame = (function () {
             return window.requestAnimationFrame ||
@@ -36,13 +35,15 @@ class PlayerWaveForm extends React.Component {
                     window.setTimeout(callback, 1000 / 30);
                 }
         })();
+        
+        this.drawCanvas = this.drawCanvas.bind(this);
+        this.draw = this.draw.bind(this);
+        this.updateSize = this.updateSize.bind(this);
     }
 
     componentDidMount() {
-        this.updateSize();
-        window.addEventListener("resize", () => {
-            this.updateSize();
-        });
+        window.addEventListener("resize", this.updateSize);
+        this.init();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -54,16 +55,19 @@ class PlayerWaveForm extends React.Component {
     }
 
     componentDidUpdate() {
-        this.ctx = this.refs.canvas.getContext('2d');
-        this.addColors();
-        this.draw();
-        clearInterval(this.timer);
-        if (this.props.isPlaying) {
-            this.timer = setInterval(this.draw.bind(this), 100)
-        }
-        this.updateSize();
+        this.init();
     }
 
+    init() {
+        this.ctx = this.refs.canvas.getContext('2d');
+        this.updateSize();
+        this.addColors();
+        clearInterval(this.timer);
+        if (this.props.isPlaying) {
+            this.timer = setInterval(this.draw, 100);
+        }
+    }
+    
     render() {
         return (
             <div className="waveform-wrapper">
@@ -121,7 +125,7 @@ class PlayerWaveForm extends React.Component {
 
     draw() {
         this.active = this.getWaveIndexByTime();
-        requestAnimationFrame(this.drawCanvas.bind(this))
+        requestAnimationFrame(this.drawCanvas)
     }
 
     drawCanvas() {
@@ -275,6 +279,7 @@ class PlayerWaveForm extends React.Component {
         this.calculateWaves();
         this.refs.canvas.removeAttribute('style');
         this.refs.canvas.setAttribute('width', this.width);
+        this.refs.canvas.setAttribute('height', this.height);
         this.refs.canvas.style.display = display;
         if (window.devicePixelRatio / 2 >= 1) {
             this.refs.canvas.width = this.width * window.devicePixelRatio;
