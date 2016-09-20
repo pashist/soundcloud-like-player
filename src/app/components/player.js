@@ -46,7 +46,9 @@ class Player extends React.Component {
                     <div className="sound-footer">
                         <TrackStats track={track} showPlayCount={options.showPlayCount}/>
                     </div>
-                    <SharePanel />
+                    <SharePanel
+                        isActive={isSharePanelActive}
+                        data={track} />
                 </div>
             </div>
         )

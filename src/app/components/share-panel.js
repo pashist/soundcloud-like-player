@@ -6,14 +6,14 @@ import SharePanelExtra from './share-panel-extra';
 
 import {toggleSharePanel} from '../actions'
 
-export class SharePanel extends React.Component {
+export default class SharePanel extends React.Component {
     render() {
-        if (!this.props.track) return null;
-        let className = 'share-panel' + (this.props.isSharePanelActive ? ' active' : '');
+        if (!this.props.data) return null;
+        let className = 'share-panel' + (this.props.isActive ? ' active' : '');
         return (
             <div className={className}>
                 <SharePanelProgressBar />
-                <SharePanelItems track={this.props.track} />
+                <SharePanelItems data={this.props.data} />
                 <SharePanelExtra />
             </div>
         )
@@ -23,9 +23,3 @@ export class SharePanel extends React.Component {
         this.props.dispatch(toggleSharePanel())
     }
 }
-
-export default connect(state => ({
-    track: state.track,
-    isSharePanelActive: state.isSharePanelActive,
-    isEmbedCodeVisible: state.isEmbedCodeVisible
-}))(SharePanel);

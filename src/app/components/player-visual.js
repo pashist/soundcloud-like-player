@@ -4,6 +4,7 @@ import PlayerButton from './player-button';
 import PlayerTitle from './player-title';
 import MediaButtons from './media-buttons';
 import PlayerWaveForm from './player-waveform';
+import SharePanel from './share-panel';
 import TracksTotal from './tracks-total';
 import {connect} from 'react-redux';
 import * as actions from '../actions';
@@ -59,6 +60,9 @@ export default class PlayerVisual extends React.Component {
                         {isPlayed && <PlayerWaveForm onSeek={this.onSeek} onClick={this.onWaveFormClick} colors="light"/>}
                         {!isPlayed && playlist && <TracksTotal value={this.calcTracksTotal()} />}
                     </div>
+                    <SharePanel
+                        isActive={isSharePanelActive}
+                        data={playlist || track} />
                 </div>
             </div>
         )

@@ -8,7 +8,7 @@ export default class SharePanelEmbedCode extends React.Component {
                 <div className="right">
                     <input type="checkbox" id="embed-code-wordpress" onClick={this.props.toggleWP}
                            checked={this.props.isEmbedCodeWordpress}/>
-                    <label for="embed-code-wordpress">WordPress</label>
+                    <label htmlFor="embed-code-wordpress">WordPress</label>
                     <button className="share-embed-code-button" onClick={this.props.onClick}>Link</button>
                 </div>
                 <div className="input-wrapper">
