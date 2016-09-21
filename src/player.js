@@ -97,6 +97,8 @@ export default class SoundCloudLikePlayer {
             store.dispatch(actions.setTracks(tracks));
             store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
             return data;
+        }).catch(err => {
+            
         });
     }
 

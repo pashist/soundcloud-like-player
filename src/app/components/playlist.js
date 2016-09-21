@@ -28,7 +28,9 @@ class Playlist extends React.Component {
     }
     render() {
         let tracks = this.props.tracks.filter(track => track.user && !track.error);
-        let className = 'playlist' + (tracks.length == this.props.tracks.length ? ' loaded' : '');
+        let className = 'playlist';
+        if (tracks.length == this.props.tracks.length) className += ' loaded';
+        if (!tracks.length) className += ' empty';
         return (
             <div className={className} style={{height: this.props.playlistHeight}}>
                 <Scrollbars

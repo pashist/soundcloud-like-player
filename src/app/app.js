@@ -22,7 +22,9 @@ export default class App extends React.Component {
 
     render() {
         let style = this.props.options.height && !this.props.isSingle ? {height: this.props.options.height} : {};
-        let className = 'scl-player' + (this.props.options.visual ? ' visual' : '');
+        let className = 'scl-player';
+        if (this.props.options.visual) className += ' visual';
+        className += this.props.isSingle ? ' single' : ' multi';
         return (
             <div className={className} style={style}>
                 {this.props.options.visual && <PlayerVisual ref="player"/>}

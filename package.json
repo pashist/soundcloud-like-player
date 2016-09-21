@@ -1,6 +1,6 @@
 {
   "name": "soundcloud-like-player",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "scripts": {
     "build": "webpack --progress",
     "build:prod": "set NODE_ENV=production&&webpack -p --progress",

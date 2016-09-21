@@ -8,11 +8,6 @@ class MediaButtonLike extends React.Component {
     componentDidUpdate(){
         ReactTooltip.rebuild();
     }
-    componentWillReceiveProps(props){
-        if (typeof props.likes[props.track.id] === 'undefined') {
-            this.props.dispatch(actions.trackLikeStatusRequest(props.track.id));
-        }
-    }
     render() {
         if (!this.props.track) return null;
         let className = 'like-button media-button';

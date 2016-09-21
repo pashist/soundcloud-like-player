@@ -7,6 +7,7 @@ import PlayerWaveForm from './player-waveform';
 import SharePanel from './share-panel';
 import TracksTotal from './tracks-total';
 import {connect} from 'react-redux';
+import ColorThief from 'color-thief-standalone';
 import * as actions from '../actions';
 import {get as getProperty} from 'lodash'
 
@@ -31,6 +32,18 @@ export default class PlayerVisual extends React.Component {
         this.onWaveFormClick = this.onWaveFormClick.bind(this);
         this.onSeek = this.onSeek.bind(this);
         this.togglePlayback = this.togglePlayback.bind(this);
+
+        this.mainColor = {
+            url: '',
+            color: [],
+            isFetching: false
+        };
+
+        this.defaultUrl = 'https://a1.sndcdn.com/images/default_artwork_large.png';
+    }
+
+    componentDidUpdate() {
+        this.detectMainColor();
     }
 
     render() {
@@ -56,13 +69,14 @@ export default class PlayerVisual extends React.Component {
                         <PlayerTitle data={playlist|| track}/>
                     </div>
                     <div className="sound-footer">
-                        {isPlayed && <PlayerArtwork track={track} showFollowButton={false}/>}
-                        {isPlayed && <PlayerWaveForm onSeek={this.onSeek} onClick={this.onWaveFormClick} colors="light"/>}
-                        {!isPlayed && playlist && <TracksTotal value={this.calcTracksTotal()} />}
+                        {isPlayed && playlist && <PlayerArtwork track={track} showFollowButton={false}/>}
+                        {(isPlayed || !playlist) &&
+                        <PlayerWaveForm onSeek={this.onSeek} onClick={this.onWaveFormClick} colors="light"/>}
+                        {!isPlayed && playlist && <TracksTotal value={this.calcTracksTotal()}/>}
                     </div>
                     <SharePanel
                         isActive={isSharePanelActive}
-                        data={playlist || track} />
+                        data={playlist || track}/>
                 </div>
             </div>
         )
@@ -85,24 +99,49 @@ export default class PlayerVisual extends React.Component {
     }
 
     getBgUrl(size = '500x500') {
-        const defaultUrl = 'http://a1.sndcdn.com/images/default_artwork_large.png';
+        
         let url;
         if (this.props.playlist) {
             url = this.props.playlist.artwork_url || this.props.playlist.user.avatar_url;
-        } else {
+        } else if(this.props.track) {
             url = this.props.track.artwork_url || this.props.track.user.avatar_url;
         }
         if (url) {
             url = url.replace(/large\./, `t${size}.`);
         }
-        return url || defaultUrl;
+        return url || this.defaultUrl;
+    }
+
+    detectMainColor() {
+        const imgUrl = this.getBgUrl();
+        if (this.defaultUrl == imgUrl || this.mainColor.isFetching) return;
+        if (this.mainColor.url != imgUrl || !this.mainColor.color.length) {
+            this.mainColor.isFetching = true;
+            this.mainColor.url = imgUrl;
+            fetch(imgUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    this.mainColor.isFetching = false;
+                    let image = new Image();
+                    image.src = URL.createObjectURL(blob);
+                    image.onload = () => {
+                        let colorThief = new ColorThief();
+                        this.mainColor.color = colorThief.getColor(image, 0);
+                        this.props.dispatch(actions.setMainColor(this.mainColor.color));
+                    }
+                })
+                .catch(err => {
+                    console.log('detectMainColor error:', err);
+                    this.mainColor.isFetching = false;
+                });
+        }
     }
 
     calcHeight() {
         return this.props.options.height - (this.props.playlist ? this.props.playlistHeight : 0)
     }
 
-    calcTracksTotal(){
+    calcTracksTotal() {
         return this.props.tracks.filter(track => !track.error).length
     }
 }

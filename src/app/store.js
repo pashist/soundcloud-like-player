@@ -6,7 +6,7 @@ import {Promise} from 'es6-promise';
 const initialState = {
     isPlaying: false,
     isPlayed: false, // once playback was started
-    isSingle: true, //single track
+    isSingle: false, //single track
     isFetching: false,  // track loading
     promise: null,      // track loading
     currentTime: 0,
@@ -30,7 +30,8 @@ const initialState = {
     tooltipTarget: null,
     audio: document.createElement('audio'),
     scrollValue: {},
-    playlistHeight: 93
+    playlistHeight: 93,
+    mainColor: [255,255,255]
 
 };
 
@@ -162,6 +163,8 @@ const reducer = (state, action) => {
             return {...state, scrollValue: action.value};
         case 'PLAYLIST_HEIGHT':
             return {...state, playlistHeight: action.value};
+        case 'MAIN_COLOR':
+            return {...state, mainColor: action.value};
         default:
             return state;
     }

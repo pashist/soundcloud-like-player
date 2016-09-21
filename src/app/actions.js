@@ -95,7 +95,9 @@ export function setTrack(index, play = true) {
 
         dispatch(setCurrentTrack(index));
         dispatch(createPlayer(play));
-
+        if (typeof state.likes[track.id] === 'undefined') {
+            dispatch(trackLikeStatusRequest(track.id));
+        }
         // no actions if same track selected or it have waveform loaded/pending
         if (track.waveform) {
             return Promise.resolve();
@@ -292,6 +294,9 @@ export function playlistScroll(value) {
 }
 export function setPlaylistHeight(value) {
     return {type: 'PLAYLIST_HEIGHT', value: value}
+}
+export function setMainColor(value) {
+    return {type: 'MAIN_COLOR', value: value}
 }
 function fetchWaveform(track) {
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');

@@ -35,7 +35,7 @@ class PlayerWaveForm extends React.Component {
                     window.setTimeout(callback, 1000 / 30);
                 }
         })();
-        
+
         this.drawCanvas = this.drawCanvas.bind(this);
         this.draw = this.draw.bind(this);
         this.updateSize = this.updateSize.bind(this);
@@ -67,7 +67,7 @@ class PlayerWaveForm extends React.Component {
             this.timer = setInterval(this.draw, 100);
         }
     }
-    
+
     render() {
         return (
             <div className="waveform-wrapper">
@@ -84,7 +84,12 @@ class PlayerWaveForm extends React.Component {
     }
 
     addColors() {
-        this.props.colors == 'light' ? this.addColorsLight() : this.addColorsDefault();
+        if (this.props.visual) {
+            let bgBrightness = this.rgbToHsl(...this.props.mainColor)[2];
+            bgBrightness < 0.6 ? this.addColorsLight() : this.addColorsDefault();
+        } else {
+            this.addColorsDefault();
+        }
     }
 
     addColorsDefault() {
@@ -366,11 +371,53 @@ class PlayerWaveForm extends React.Component {
             return null;
         }
     }
+
+    /**
+     * Converts an RGB color value to HSL. Conversion formula
+     * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+     * Assumes r, g, and b are contained in the set [0, 255] and
+     * returns h, s, and l in the set [0, 1].
+     *
+     * @param   Number  r       The red color value
+     * @param   Number  g       The green color value
+     * @param   Number  b       The blue color value
+     * @return  Array           The HSL representation
+     */
+    rgbToHsl(r, g, b) {
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if (max == min) {
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                case g:
+                    h = (b - r) / d + 2;
+                    break;
+                case b:
+                    h = (r - g) / d + 4;
+                    break;
+            }
+            h /= 6;
+        }
+
+        return [h, s, l];
+    }
 }
 
 export default connect(state => ({
     player: state.player,
     track: state.track,
     isPlaying: state.isPlaying,
-    isPlayed: state.isPlayed
+    isPlayed: state.isPlayed,
+    mainColor: state.mainColor,
+    visual: state.options.visual
 }))(PlayerWaveForm);
