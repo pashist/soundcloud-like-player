@@ -88,7 +88,7 @@ export default class SoundCloudLikePlayer {
     }
 
     resolve(url) {
-        return (this.options.apiUrl ? this.get('/resolve', {url:url}) : this.api.resolve(url)).then(data => {
+        return this.get('/resolve', {url:url}).then(data => {
             let tracks = data instanceof Array
                 ? data : data.kind == 'playlist'
                 ? data.tracks : data.kind == 'track'
@@ -139,7 +139,9 @@ export default class SoundCloudLikePlayer {
         this.options[key] = value;
         return this;
     }
-
+    on(event, callback) {
+        return store.getState().events.on(event, callback); //todo consider move to native audio and use builtin events
+    }
     get(path, params) {
         if (this.options.apiUrl) {
             let fetchUrl = this._appendQueryParams(

@@ -2,6 +2,7 @@ import {combineReducers, createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import fetch from 'isomorphic-fetch';
 import {Promise} from 'es6-promise';
+import eventEmitter from 'event-emitter';
 
 const initialState = {
     isPlaying: false,
@@ -31,8 +32,8 @@ const initialState = {
     audio: document.createElement('audio'),
     scrollValue: {},
     playlistHeight: 93,
-    mainColor: [255,255,255]
-
+    mainColor: [255, 255, 255],
+    events: eventEmitter({})
 };
 
 const reducer = (state, action) => {
@@ -40,6 +41,7 @@ const reducer = (state, action) => {
         case 'PLAYBACK_START':
             if (state.player) {
                 state.player.play();
+                state.events.emit('play'); //todo bind to player events
                 return {...state, isPlaying: true, isPlayed: true};
             } else {
                 alert(`Can't play this track`);
@@ -47,12 +49,20 @@ const reducer = (state, action) => {
             }
         case 'PLAYBACK_PAUSE':
             state.player.pause();
+            state.events.emit('pause');
             return {...state, isPlaying: false};
         case 'PLAYBACK_STOP':
             state.player.pause();
+            state.events.emit('pause');
             return {...state, isPlaying: false};
         case 'PLAYBACK_TOGGLE':
-            state.isPlaying ? state.player.pause() : state.player.play();
+            if(state.isPlaying) {
+                state.player.pause();
+                state.events.emit('pause');
+            } else {
+                state.player.play();
+                state.events.emit('play');
+            }
             return {...state, isPlaying: !state.isPlaying, isPlayed: true};
         case 'SET_TRACK_CURRENT_TIME':
             if (state.player) {
