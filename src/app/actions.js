@@ -301,9 +301,6 @@ export function setPlaylistHeight(value) {
 export function setMainColor(value) {
     return {type: 'MAIN_COLOR', value: value}
 }
-export function addEventListener(event, callback) {
-    return {type: 'ADD_EVENT_LISTENER', event: event, callback: callback}
-}
 function fetchWaveform(track) {
     let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');
     return fetch(url).then(res => res.json());
