@@ -12,35 +12,44 @@ import './css/styles.scss';
 
 @connect(state => ({
     isSingle: state.isSingle,
-    track: state.track
+    track: state.track,
+    options: state.options
 }))
 
 export default class App extends React.Component {
+    componentDidMount() {
+        this.updateHeight();
+    }
+
     componentDidUpdate() {
-        !this.props.options.visual && this.props.track && this.setHeight();
+        this.updateHeight();
     }
 
     render() {
-        let style = this.props.options.height && !this.props.isSingle ? {height: this.props.options.height} : {};
         let className = 'scl-player';
         if (this.props.options.visual) className += ' visual';
         className += this.props.isSingle ? ' single' : ' multi';
         return (
-            <div className={className} style={style}>
-                {this.props.options.visual && <PlayerVisual ref="player"/>}
-                {!this.props.options.visual && <Player ref="player"/>}
+            <div className={className} style={this.computeStyle()}>
+                {this.props.options.visual ? <PlayerVisual ref="player"/> : <Player ref="player"/>}
                 {!this.props.isSingle && <Playlist ref="playlist"/>}
                 <CookiePolicy />
             </div>
         )
     }
 
-    setHeight() {
+    updateHeight() {
         let {height} = this.props.options;
-        if (height) {
+        if (height && !this.props.options.visual && this.props.track) {
             let playerHeight = ReactDOM.findDOMNode(this.refs.player).offsetHeight;
             let playlistHeight = height - playerHeight;
             this.props.dispatch(actions.setPlaylistHeight(playlistHeight));
         }
+    }
+
+    computeStyle() {
+        let style = {};
+        if (this.props.options.height && !this.props.isSingle) style.height = this.props.options.height;
+        return style;
     }
 }

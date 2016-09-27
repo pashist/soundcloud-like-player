@@ -100,6 +100,8 @@ const reducer = (state, action) => {
             return {...state, api: action.api};
         case 'SET_OPTIONS':
             return {...state, options: action.options};
+        case 'UPDATE_OPTIONS':
+            return {...state, options: {...state.options, ...action.options}};
         case 'LIKE_TRACK':
             return {...state, likes: {...state.likes, [action.trackId]: {isFetching: false, value: true}}};
         case 'UNLIKE_TRACK':

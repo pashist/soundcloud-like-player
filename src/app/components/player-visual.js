@@ -7,7 +7,6 @@ import PlayerWaveForm from './player-waveform';
 import SharePanel from './share-panel';
 import TracksTotal from './tracks-total';
 import {connect} from 'react-redux';
-import ColorThief from 'color-thief-standalone';
 import * as actions from '../actions';
 import {get as getProperty} from 'lodash'
 
@@ -125,8 +124,22 @@ export default class PlayerVisual extends React.Component {
                     let image = new Image();
                     image.src = URL.createObjectURL(blob);
                     image.onload = () => {
-                        let colorThief = new ColorThief();
-                        this.mainColor.color = colorThief.getColor(image, 0);
+                        let canvas = document.createElement('canvas');
+                        let context = canvas.getContext('2d');
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        context.drawImage(image, 0, 0);
+                        let pixelData = context.getImageData(0, 0, image.width, image.height).data;
+                        let pixelCount = image.width*image.height;
+                        let avg = [0,0,0];
+                        for (let i = 0, offset; i < pixelCount; i = i + 1) {
+                            offset = i * 4;
+                            avg[0] += pixelData[offset + 0];
+                            avg[1] += pixelData[offset + 1];
+                            avg[2] += pixelData[offset + 2];
+                        }
+                        avg = avg.map(val => Math.round(val/pixelCount));
+                        this.mainColor.color = avg;
                         this.props.dispatch(actions.setMainColor(this.mainColor.color));
                     }
                 })

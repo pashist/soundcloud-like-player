@@ -56,6 +56,7 @@ export default class SoundCloudLikePlayer {
             },
             width: 'auto',
             height: null,
+            minHeight: 166,
             showLikeButton: true,
             showDownloadButton: true,
             showBuyButton: true,
@@ -131,7 +132,9 @@ export default class SoundCloudLikePlayer {
     next() {
         store.dispatch(actions.next());
     }
-
+    update(opts) {
+        store.dispatch(actions.updateOptions(opts))
+    }
     configure(key, value) {
         this.options[key] = value;
         return this;

@@ -86,7 +86,7 @@ class PlayerWaveForm extends React.Component {
     addColors() {
         if (this.props.visual) {
             let bgBrightness = this.rgbToHsl(...this.props.mainColor)[2];
-            bgBrightness < 0.6 ? this.addColorsLight() : this.addColorsDefault();
+            bgBrightness < 0.5 ? this.addColorsLight() : this.addColorsDefault();
         } else {
             this.addColorsDefault();
         }

@@ -70,6 +70,9 @@ export function setApi(api, playerApi) {
 export function setOptions(options) {
     return {type: 'SET_OPTIONS', options: options}
 }
+export function updateOptions(options) {
+    return {type: 'UPDATE_OPTIONS', options: options}
+}
 /**
  * Set current track and fetch waveform data for track if it not fetched yet
  * @param index Track index

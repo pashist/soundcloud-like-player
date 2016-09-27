@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ScrollArea from 'react-scrollbar';
+import ReactSpinner from 'react-spinjs';
 import {Scrollbars} from 'react-custom-scrollbars';
 import {connect} from 'react-redux';
 import PlaylistItem from './playlist-item';
@@ -27,33 +28,38 @@ class Playlist extends React.Component {
         this.loadTracksIfNeeded();
     }
     render() {
-        let tracks = this.props.tracks.filter(track => track.user && !track.error);
+        const {tracks, playlistHeight, isPlayed, options, isPlaying, isFetching} = this.props;
+        let loadedTracks = tracks.filter(track => track.user && !track.error);
         let className = 'playlist';
-        if (tracks.length == this.props.tracks.length) className += ' loaded';
-        if (!tracks.length) className += ' empty';
+        if (this.isLoaded()) className += ' loaded';
+        if (!loadedTracks.length) className += ' empty';
         return (
-            <div className={className} style={{height: this.props.playlistHeight}}>
+            <div className={className} style={options.visual ? {height: playlistHeight} : {}}>
                 <Scrollbars
                     ref="scrollbars"
                     onScroll={this.onScroll}
                     autoHide
-                    style={{height: this.props.playlistHeight}}
+                    style={{height: playlistHeight}}
                 >
-                    {tracks.map((track, i) =>
+                    {loadedTracks.map((track, i) =>
                         <PlaylistItem
                             key={i}
                             index={i}
                             isCurrent={this.isCurrent(track)}
-                            isActive={this.isCurrent(track) && this.props.isPlayed}
-                            isPlaying={this.props.isPlaying}
+                            isActive={this.isCurrent(track) && isPlayed}
+                            isPlaying={isPlaying}
                             isLast={tracks.length == i+1}
                             track={track}
                             onClick={this.onTrackClick}
-                            colors={this.props.options.colors.playlist}
-                            showPlayCount={this.props.options.showPlayCount}
+                            colors={options.colors.playlist}
+                            showPlayCount={options.showPlayCount}
                         />)
                     }
-                    <div className="playlist-end"></div>
+                    {
+                        this.isLoaded() 
+                        ? <div className="playlist-end"></div> 
+                        : <div className="playlist-throbber"><ReactSpinner config={this.spinnerConfig}/></div>
+                    }
                 </Scrollbars>
             </div>
         )
@@ -119,6 +125,18 @@ class Playlist extends React.Component {
 
     isLastTrackLoaded() {
         return this.props.tracks.length && this.props.tracks[this.props.tracks.length - 1].title
+    }
+
+    isLoaded() {
+        return this.tracksNotLoaded().length == 0;
+    }
+    
+    get spinnerConfig() {
+        return {
+            width: 3,
+            length: 6,
+            radius: 8
+        }
     }
 }
 

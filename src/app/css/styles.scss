@@ -870,4 +870,37 @@
 .scl-player.single {
   height: auto;
 }
-
+.scl-player {
+  .playlist-throbber {
+    position: relative;
+    height: 60px;
+  }
+  .player {
+    min-height: 166px;
+    min-width: 250px;
+  }
+}
+.scl-player.single.mini {
+  min-height: 116px;
+  min-width: 250px;
+  max-height: 166px;
+  max-width: 1900px;
+}
+.scl-player.single {
+  min-height: 166px;
+  min-width: 250px;
+  max-height: 2000px;
+  max-width: 1900px;
+}
+.scl-player {
+  min-height: 169px;
+  min-width: 250px;
+  max-height: 2000px;
+  max-width: 1900px;
+}
+.scl-player.mini {
+  min-height: 116px;
+  min-width: 250px;
+  max-height: 2000px;
+  max-width: 1900px;
+}
