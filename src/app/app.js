@@ -53,9 +53,9 @@ export default class App extends React.Component {
 
     className() {
         let className = ['scl-player'];
-        if (this.props.options.visual) className.push('visual');
         if (this.props.isMini) className.push('mini');
         className.push(this.props.isSingle ? 'single' : 'multi');
+        className.push(this.props.options.visual ? 'visual' : 'default');
         return className.join(' ');
     }
 }
