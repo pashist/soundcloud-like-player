@@ -54,7 +54,7 @@ export default class SoundCloudLikePlayer {
                     trackActive: '#ff5500'
                 }
             },
-            width: 'auto',
+            width: null,
             height: null,
             minHeight: 166,
             showLikeButton: true,
@@ -78,12 +78,18 @@ export default class SoundCloudLikePlayer {
         if (!options.clientId) {
             throw new Error('Parameter `clientId` required');
         }
-        if (!options.height) {
-            options.height = options.container.offsetHeight
-        }
         if (!options.playerClientId) {
             options.playerClientId = options.clientId
         }
+        
+        let containerStyle = window.getComputedStyle(options.container);
+        if (!options.height) {
+            options.height = parseInt(containerStyle.height) || options.container.offsetHeight;
+        }
+        if (!options.width) {
+            options.width = parseInt(containerStyle.width) || options.container.offsetWidth
+        }
+        
         return options;
     }
 

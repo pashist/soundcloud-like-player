@@ -24,7 +24,7 @@ class Player extends React.Component {
         if (!track) return null;
         return (
             <div className="player">
-                <PlayerArtwork track={track} showFollowButton={options.showFollowButton}/>
+                {options.width >= 350 && <PlayerArtwork track={track} showFollowButton={options.showFollowButton}/>}
                 <div className="sound">
                     <div className="sound-header">
                         <PlayerButton color={getProperty(options, 'colors.playButton')} 
