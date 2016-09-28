@@ -14,7 +14,8 @@ import './css/styles.scss';
     isSingle: state.isSingle,
     track: state.track,
     options: state.options,
-    isMini: state.isMini
+    isMini: state.isMini,
+    isNarrow: state.isNarrow
 }))
 
 export default class App extends React.Component {
@@ -54,6 +55,7 @@ export default class App extends React.Component {
     className() {
         let className = ['scl-player'];
         if (this.props.isMini) className.push('mini');
+        if (this.props.isNarrow) className.push('narrow');
         className.push(this.props.isSingle ? 'single' : 'multi');
         className.push(this.props.options.visual ? 'visual' : 'default');
         return className.join(' ');

@@ -20,11 +20,11 @@ class Player extends React.Component {
     }
 
     render() {
-        const {track, options, isPlaying, player, isPlayed, isSharePanelActive, isMini} = this.props;
+        const {track, options, isPlaying, player, isPlayed, isSharePanelActive, isMini, isNarrow} = this.props;
         if (!track) return null;
         return (
             <div className="player">
-                {options.width >= 350 && <PlayerArtwork track={track} showFollowButton={options.showFollowButton}/>}
+                {!isNarrow && <PlayerArtwork track={track} showFollowButton={options.showFollowButton}/>}
                 <div className="sound">
                     <div className="sound-header">
                         <PlayerButton color={getProperty(options, 'colors.playButton')} 
@@ -82,5 +82,6 @@ export default connect(state => ({
     options: state.options,
     player: state.player,
     isSharePanelActive: state.isSharePanelActive,
-    isMini: state.isMini
+    isMini: state.isMini,
+    isNarrow: state.isNarrow
 }))(Player);
