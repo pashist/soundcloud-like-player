@@ -20,7 +20,7 @@ class Player extends React.Component {
     }
 
     render() {
-        const {track, options, isPlaying, player, isPlayed, isSharePanelActive} = this.props;
+        const {track, options, isPlaying, player, isPlayed, isSharePanelActive, isMini} = this.props;
         if (!track) return null;
         return (
             <div className="player">
@@ -33,6 +33,7 @@ class Player extends React.Component {
                                       player={player}
                                       onClick={this.togglePlayback}/>
                         <MediaButtons data={track} 
+                                      isMini={isMini}
                                       isPlayed={isPlayed} 
                                       options={options}
                                       onShareBtnClick={this.onShareBtnClick}
@@ -69,6 +70,9 @@ class Player extends React.Component {
     onShareBtnClick() {
         this.props.dispatch(actions.toggleSharePanel())
     }
+    isMini() {
+        return this.props.options.height <= 100
+    }
 }
 
 export default connect(state => ({
@@ -77,5 +81,6 @@ export default connect(state => ({
     track: state.track,
     options: state.options,
     player: state.player,
-    isSharePanelActive: state.isSharePanelActive
+    isSharePanelActive: state.isSharePanelActive,
+    isMini: state.isMini
 }))(Player);

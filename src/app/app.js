@@ -13,24 +13,22 @@ import './css/styles.scss';
 @connect(state => ({
     isSingle: state.isSingle,
     track: state.track,
-    options: state.options
+    options: state.options,
+    isMini: state.isMini
 }))
 
 export default class App extends React.Component {
     componentDidMount() {
-        this.updateHeight();
+        this.updateSize();
     }
 
     componentDidUpdate() {
-        this.updateHeight();
+        this.updateSize();
     }
 
     render() {
-        let className = 'scl-player';
-        if (this.props.options.visual) className += ' visual';
-        className += this.props.isSingle ? ' single' : ' multi';
         return (
-            <div className={className} style={this.computeStyle()}>
+            <div className={this.className()} style={this.style()}>
                 {this.props.options.visual ? <PlayerVisual ref="player"/> : <Player ref="player"/>}
                 {!this.props.isSingle && <Playlist ref="playlist"/>}
                 <CookiePolicy />
@@ -38,7 +36,7 @@ export default class App extends React.Component {
         )
     }
 
-    updateHeight() {
+    updateSize() {
         let {height} = this.props.options;
         if (height && !this.props.options.visual && this.props.track) {
             let playerHeight = ReactDOM.findDOMNode(this.refs.player).offsetHeight;
@@ -47,9 +45,17 @@ export default class App extends React.Component {
         }
     }
 
-    computeStyle() {
+    style() {
         let style = {};
         if (this.props.options.height && !this.props.isSingle) style.height = this.props.options.height;
         return style;
+    }
+
+    className() {
+        let className = ['scl-player'];
+        if (this.props.options.visual) className.push('visual');
+        if (this.props.isMini) className.push('mini');
+        className.push(this.props.isSingle ? 'single' : 'multi');
+        return className.join(' ');
     }
 }

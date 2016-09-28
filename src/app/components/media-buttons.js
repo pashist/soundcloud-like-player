@@ -8,7 +8,7 @@ import {connect} from 'react-redux';
 
 export default class MediaButtons extends React.Component {
     render() {
-        const {data, options, isPlayed, onShareBtnClick, isSharePanelActive, isVisual} = this.props;
+        const {data, options, isPlayed, onShareBtnClick, isSharePanelActive, isVisual, isMini} = this.props;
         if (!data) return null;
         const isTrack = data.kind == 'track';
         return (
@@ -17,7 +17,7 @@ export default class MediaButtons extends React.Component {
                     {options.showLikeButton && isPlayed && isTrack && <MediaButtonLike data={data}/>}
                     {options.showDownloadButton && <MediaButtonDownload clientId={options.clientId} data={data}/>}
                     {options.showBuyButton && <MediaButtonBuy data={data}/>}
-                    {options.showShareButton && <MediaButtonShare
+                    {options.showShareButton && !isMini && <MediaButtonShare
                         data={data}
                         onClick={onShareBtnClick}
                         isActive={isSharePanelActive}
