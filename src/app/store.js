@@ -80,6 +80,20 @@ const reducer = (state, action) => {
             return {...state, index: action.index, track: state.tracks[action.index]};
         case 'SET_TRACKS':
             return {...state, tracks: action.tracks};
+        case 'RESET_TRACKS':
+            if (state.isPlaying) {
+                state.player.pause();
+                state.events.emit('pause');
+            }
+            return {
+                ...state, 
+                tracks: [],
+                playlist: null,
+                isSingle: false,
+                index: 0, 
+                track: null,
+                isPlaying: false
+            };
         case 'SET_PLAYLIST':
             return {...state, playlist: action.playlist};
         case 'SET_SINGLE':

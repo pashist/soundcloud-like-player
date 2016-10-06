@@ -95,17 +95,10 @@ export default class SoundCloudLikePlayer {
 
     resolve(url) {
         return this.get('/resolve', {url:url}).then(data => {
-            let tracks = data instanceof Array
-                ? data : data.kind == 'playlist'
-                ? data.tracks : data.kind == 'track'
-                ? [data] : [];
-            store.dispatch(actions.setPlaylist(data));
-            store.dispatch(actions.setSingle(data.kind == 'track'));
-            store.dispatch(actions.setTracks(tracks));
-            store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
+            this.updateSource(data);
             return data;
         }).catch(err => {
-            
+            this.clear();
         });
     }
 
@@ -121,6 +114,13 @@ export default class SoundCloudLikePlayer {
                 }
                 return data;
             })
+    }
+
+    /**
+     * clear track list
+     */
+    clear() {
+        store.dispatch(actions.resetTracks());
     }
 
     play(args) {
@@ -150,7 +150,7 @@ export default class SoundCloudLikePlayer {
     }
     get(path, params) {
         if (this.options.apiUrl) {
-            let fetchUrl = this._appendQueryParams(
+            let fetchUrl = this.appendQueryParams(
                 this.options.apiUrl + path, 
                 Object.assign(params, {client_id: this.options.playerClientId})
             );
@@ -160,7 +160,7 @@ export default class SoundCloudLikePlayer {
         }
     }
 
-    _appendQueryParams(_url, params = {}) {
+    appendQueryParams(_url, params = {}) {
         let parsed = url.parse(_url, true);
         parsed.query = Object.assign(parsed.query, params);
         return url.format(parsed);
@@ -173,5 +173,21 @@ export default class SoundCloudLikePlayer {
             if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
         }
         return copy;
+    }
+
+    updateSource(data){
+        if (!data || (data instanceof Array && !data.length)) {
+            this.clear();
+        } else {
+            let tracks = data instanceof Array
+                ? data : data.kind == 'playlist'
+                ? data.tracks : data.kind == 'track'
+                ? [data] : [];
+            store.dispatch(actions.setPlaylist(data));
+            store.dispatch(actions.setSingle(data.kind == 'track'));
+            store.dispatch(actions.setTracks(tracks));
+            store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
+        }
+
     }
 }

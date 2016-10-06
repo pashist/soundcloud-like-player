@@ -83,7 +83,7 @@ export function setTrack(index, play = true) {
 
     return function (dispatch, getState) {
         let state = getState();
-        
+
         if (index == state.index && state.player) {
             dispatch(toggle());
             return Promise.resolve();
@@ -117,7 +117,6 @@ export function setTrack(index, play = true) {
                 })
         }
         dispatch(fetchTrackWaveform(index, promise));
-
         return promise;
     };
 }
@@ -126,6 +125,9 @@ export function setCurrentTrack(index) {
 }
 export function setTracks(tracks) {
     return {type: 'SET_TRACKS', tracks: tracks}
+}
+export function resetTracks() {
+    return {type: 'RESET_TRACKS'}
 }
 export function setPlaylist(playlist) {
     return {type: 'SET_PLAYLIST', playlist: playlist.kind == 'playlist' ? playlist : null}
