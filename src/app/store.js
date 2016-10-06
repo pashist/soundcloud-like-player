@@ -11,7 +11,7 @@ const initialState = {
     isFetching: false,  // track loading
     promise: null,      // track loading
     currentTime: 0,
-    index: 0,
+    index: null,
     error: null,
     tracks: [],
     track: null,
@@ -37,6 +37,7 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+    console.log(action);
     switch (action.type) {
         case 'PLAYBACK_START':
             if (state.player) {
@@ -90,9 +91,9 @@ const reducer = (state, action) => {
                 tracks: [],
                 playlist: null,
                 isSingle: false,
-                index: 0, 
                 track: null,
-                isPlaying: false
+                isPlaying: false,
+                index: null
             };
         case 'SET_PLAYLIST':
             return {...state, playlist: action.playlist};
