@@ -37,7 +37,6 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-    console.log(action);
     switch (action.type) {
         case 'PLAYBACK_START':
             if (state.player) {
