@@ -98,6 +98,7 @@ export default class SoundCloudLikePlayer {
             this.updateSource(data);
             return data;
         }).catch(err => {
+            console.log(err);
             this.clear();
         });
     }
@@ -176,7 +177,7 @@ export default class SoundCloudLikePlayer {
     }
 
     updateSource(data){
-        if (!data || (data instanceof Array && !data.length)) {
+        if (!data || data.errors || (data instanceof Array && !data.length)) {
             this.clear();
         } else {
             let tracks = data instanceof Array
