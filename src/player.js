@@ -146,7 +146,7 @@ export default class SoundCloudLikePlayer {
     }
     update(opts) {
         store.dispatch(actions.updateOptions(opts));
-        this.options = _.assign(this.options, opts);
+        this.options = this.parseOptions(_.assign(this.options, opts));
         this.initApi();
     }
     configure(key, value) {

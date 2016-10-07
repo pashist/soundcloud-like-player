@@ -39,7 +39,7 @@ export default class App extends React.Component {
 
     updateSize() {
         let {height} = this.props.options;
-        if (height && !this.props.options.visual && this.props.track) {
+        if (height && this.props.track) {
             let playerHeight = ReactDOM.findDOMNode(this.refs.player).offsetHeight;
             let playlistHeight = height - playerHeight;
             this.props.dispatch(actions.setPlaylistHeight(playlistHeight));
