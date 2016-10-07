@@ -12,6 +12,7 @@ import * as actions from './app/actions';
 export default class SoundCloudLikePlayer {
 
     constructor(opts) {
+        this.url = null;
         this.options = this.parseOptions(opts);
         this.api = window.SC = SC;
         this.api._get = this.get.bind(this);
@@ -23,11 +24,7 @@ export default class SoundCloudLikePlayer {
             console.log('connect error', err)
         });
 
-        this.api.initialize({
-            client_id: this.options.clientId,
-            redirect_uri: this.options.redirectUri,
-            oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
-        });
+        this.initApi();
         
         store.dispatch(actions.setOptions(this.options));
         store.dispatch(actions.setApi(this.api));
@@ -94,6 +91,7 @@ export default class SoundCloudLikePlayer {
     }
 
     resolve(url) {
+        this.url = url;
         return this.get('/resolve', {url:url}).then(data => {
             this.updateSource(data);
             return data;
@@ -124,6 +122,13 @@ export default class SoundCloudLikePlayer {
         store.dispatch(actions.resetTracks());
     }
 
+    /**
+     * reload tracks from current url
+     */
+    reload() {
+        this.clear();
+        this.resolve(this.url);
+    }
     play(args) {
         store.dispatch(actions.play(args))
     }
@@ -140,7 +145,9 @@ export default class SoundCloudLikePlayer {
         store.dispatch(actions.next());
     }
     update(opts) {
-        store.dispatch(actions.updateOptions(opts))
+        store.dispatch(actions.updateOptions(opts));
+        this.options = _.assign(this.options, opts);
+        this.initApi();
     }
     configure(key, value) {
         this.options[key] = value;
@@ -190,5 +197,13 @@ export default class SoundCloudLikePlayer {
             store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
         }
 
+    }
+
+    initApi(){
+        this.api.initialize({
+            client_id: this.options.clientId,
+            redirect_uri: this.options.redirectUri,
+            oauth_token: localStorage.getItem('SC_OAUTH_TOKEN')
+        });
     }
 }
