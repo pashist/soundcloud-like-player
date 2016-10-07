@@ -42,7 +42,8 @@ export default class App extends React.Component {
         if (height && this.props.track) {
             let playerHeight = ReactDOM.findDOMNode(this.refs.player).offsetHeight;
             let playlistHeight = height - playerHeight;
-            this.props.dispatch(actions.setPlaylistHeight(playlistHeight));
+            let minPlaylistHeight = this.calcMinPlaylistHeight();
+            this.props.dispatch(actions.setPlaylistHeight(Math.max(minPlaylistHeight, playlistHeight)));
         }
     }
 
@@ -59,5 +60,15 @@ export default class App extends React.Component {
         className.push(this.props.isSingle ? 'single' : 'multi');
         className.push(this.props.options.visual ? 'visual' : 'default');
         return className.join(' ');
+    }
+
+    calcMinPlaylistHeight(){
+        let trackHeight = 30;
+        let minTracks = 3;
+        let track = ReactDOM.findDOMNode(this.refs.player).querySelector('.playlist-item');
+        if (track) {
+            trackHeight = track.offsetHeight;
+        }
+        return trackHeight * minTracks;
     }
 }

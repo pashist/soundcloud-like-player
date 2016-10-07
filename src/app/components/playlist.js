@@ -14,6 +14,7 @@ class Playlist extends React.Component {
         this.onScroll = this.onScroll.bind(this);
         this.isPlayerHeightChanged = false;
         this.isTracksLoaded = false;
+        this.trackHeight = 31;
     }
 
     componentDidMount() {
@@ -76,7 +77,7 @@ class Playlist extends React.Component {
     onScroll() {
 
         let values = this.refs.scrollbars.getValues();
-        if (values.scrollTop + values.clientHeight + 31 >= values.scrollHeight) {
+        if (values.scrollTop + values.clientHeight + this.trackHeight >= values.scrollHeight) {
             this.loadTracks();
         }
         if (this.props.options.visual) {
@@ -84,9 +85,8 @@ class Playlist extends React.Component {
                 this.isPlayerHeightChanged = false;
                 return;
             }
-            const trackHeight = 31;
             const maxHeight = this.props.options.height - 170;
-            let height = 3 * trackHeight + values.scrollTop * (values.scrollTop / 100);
+            let height = 3 * this.trackHeight + values.scrollTop * (values.scrollTop / 100);
             this.props.dispatch(actions.setPlaylistHeight(Math.min(height, maxHeight)));
         }
     }
