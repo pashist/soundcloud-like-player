@@ -1,4 +1,4 @@
-import {combineReducers, createStore, applyMiddleware} from 'redux';
+import {combineReducers, createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import fetch from 'isomorphic-fetch';
 import {Promise} from 'es6-promise';
@@ -31,9 +31,11 @@ const initialState = {
     tooltipTarget: null,
     audio: document.createElement('audio'),
     scrollValue: {},
-    playlistHeight: 93,
+    playlistHeight: null,
     mainColor: [255, 255, 255],
-    events: eventEmitter({})
+    events: eventEmitter({}),
+    resetScroll: false,
+    trackHeight: 31
 };
 
 const reducer = (state, action) => {
@@ -79,7 +81,7 @@ const reducer = (state, action) => {
             index < store.getState().tracks.length ? setTrack(index) : stop();
             return {...state, index: action.index, track: state.tracks[action.index]};
         case 'SET_TRACKS':
-            return {...state, tracks: action.tracks};
+            return {...state, tracks: action.tracks, resetScroll: true};
         case 'RESET_TRACKS':
             if (state.isPlaying) {
                 state.player.pause();
@@ -92,7 +94,8 @@ const reducer = (state, action) => {
                 isSingle: false,
                 track: null,
                 isPlaying: false,
-                index: null
+                index: null,
+                playlistHeight: null
             };
         case 'SET_PLAYLIST':
             return {...state, playlist: action.playlist};
@@ -201,11 +204,14 @@ const reducer = (state, action) => {
             return {...state, playlistHeight: action.value};
         case 'MAIN_COLOR':
             return {...state, mainColor: action.value};
+        case 'SET_STATE_VALUE':
+            return {...state, [action.key]: action.value};
         default:
             return state;
     }
 };
 
-let store = createStore(reducer, initialState, applyMiddleware(thunk));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+let store = createStore(reducer, initialState, composeEnhancers(applyMiddleware(thunk)));
 
 export default store;

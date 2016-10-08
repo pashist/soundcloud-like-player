@@ -14,7 +14,6 @@ class Playlist extends React.Component {
         this.onScroll = this.onScroll.bind(this);
         this.isPlayerHeightChanged = false;
         this.isTracksLoaded = false;
-        this.trackHeight = 31;
     }
 
     componentDidMount() {
@@ -27,7 +26,12 @@ class Playlist extends React.Component {
     }
     componentDidUpdate(){
         this.loadTracksIfNeeded();
+        if (this.props.resetScroll) {
+            this.refs.scrollbars.scrollToTop();
+            this.props.dispatch(actions.setStateValue('resetScroll', false))
+        }
     }
+
     render() {
         const {tracks, playlistHeight, isPlayed, options, isPlaying, isFetching} = this.props;
         let loadedTracks = tracks.filter(track => track.user && !track.error);
@@ -77,7 +81,7 @@ class Playlist extends React.Component {
     onScroll() {
 
         let values = this.refs.scrollbars.getValues();
-        if (values.scrollTop + values.clientHeight + this.trackHeight >= values.scrollHeight) {
+        if (values.scrollTop + values.clientHeight + this.props.trackHeight >= values.scrollHeight) {
             this.loadTracks();
         }
         if (this.props.options.visual) {
@@ -86,7 +90,7 @@ class Playlist extends React.Component {
                 return;
             }
             const maxHeight = this.props.options.height - 170;
-            let height = 3 * this.trackHeight + values.scrollTop * (values.scrollTop / 100);
+            let height = 3 * this.props.trackHeight + values.scrollTop * (values.scrollTop / 100);
             this.props.dispatch(actions.setPlaylistHeight(Math.min(height, maxHeight)));
         }
     }
@@ -148,5 +152,7 @@ export default connect(state => ({
     isFetching: state.isFetching,
     error: state.error,
     isPlayed: state.isPlayed,
-    playlistHeight: state.playlistHeight
+    playlistHeight: state.playlistHeight,
+    resetScroll: state.resetScroll,
+    trackHeight: state.trackHeight
 }))(Playlist);
