@@ -40,7 +40,7 @@ const initialState = {
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'PLAYBACK_START':
+        case 'PLAY':
             if (state.player) {
                 state.player.play();
                 state.events.emit('play'); //todo bind to player events
@@ -49,15 +49,15 @@ const reducer = (state, action) => {
                 alert(`Can't play this track`);
                 return state;
             }
-        case 'PLAYBACK_PAUSE':
+        case 'PAUSE':
             state.player.pause();
             state.events.emit('pause');
             return {...state, isPlaying: false};
-        case 'PLAYBACK_STOP':
+        case 'STOP':
             state.player.pause();
             state.events.emit('pause');
             return {...state, isPlaying: false};
-        case 'PLAYBACK_TOGGLE':
+        case 'TOGGLE':
             if(state.isPlaying) {
                 state.player.pause();
                 state.events.emit('pause');
@@ -94,6 +94,7 @@ const reducer = (state, action) => {
                 isSingle: false,
                 track: null,
                 isPlaying: false,
+                isPlayed: false,
                 index: null,
                 playlistHeight: null
             };
@@ -114,7 +115,7 @@ const reducer = (state, action) => {
                 tracks: state.tracks.map((track, i) => action.index == i ? {...track, waveform: action.data} : track),
                 track: {...state.track, waveform: action.data}
             };
-        case 'FETCH_TRACK_WAVEFORM':
+        case 'TRACK_WAVEFORM_REQUEST':
             return {
                 ...state,
                 tracks: state.tracks.map((track, i) =>
@@ -128,16 +129,16 @@ const reducer = (state, action) => {
         case 'SET_OPTIONS':
             return {
                 ...state, 
-                isMini: action.options.height < 160,
-                isNarrow: action.options.width < 350,
-                options: action.options
+                isMini: action.payload.height < 160,
+                isNarrow: action.payload.width < 350,
+                options: action.payload
             };
         case 'UPDATE_OPTIONS':
             return {
                 ...state, 
-                isMini: action.options.height < 160,
-                isNarrow: action.options.width < 350,
-                options: {...state.options, ...action.options}
+                isMini: action.payload.height < 160,
+                isNarrow: action.payload.width < 350,
+                options: {...state.options, ...action.payload}
             };
         case 'LIKE_TRACK':
             return {...state, likes: {...state.likes, [action.trackId]: {isFetching: false, value: true}}};

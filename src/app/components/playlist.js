@@ -75,7 +75,7 @@ class Playlist extends React.Component {
     }
 
     onTrackClick(i) {
-        this.props.dispatch(actions.setTrack(i));
+        this.props.dispatch(this.isCurrent(this.props.tracks[i]) ? actions.toggle() : actions.setTrack(i));
     }
 
     onScroll() {

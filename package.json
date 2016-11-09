@@ -1,10 +1,10 @@
 {
   "name": "soundcloud-like-player",
-  "version": "0.4.22",
+  "version": "0.4.23",
   "scripts": {
     "build": "webpack --progress",
     "build:prod": "set NODE_ENV=production&&webpack -p --progress",
-    "serve": "webpack-dev-server --progress --inline --port 3001"
+    "serve": "webpack-dev-server --progress --inline --port 3001 --host 0.0.0.0"
   },
   "main": "dist/index.js",
   "dependencies": {},
@@ -38,6 +38,8 @@
     "react-spinjs": "^3.0.0",
     "react-tooltip": "^3.1.7",
     "redux": "^3.5.2",
+    "redux-actions": "^0.12.0",
+    "redux-promise": "^0.5.3",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^4.0.2",
     "soundcloud": "^3.1.2",

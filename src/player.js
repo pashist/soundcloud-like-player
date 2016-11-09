@@ -191,6 +191,7 @@ export default class SoundCloudLikePlayer {
                 ? data : data.kind == 'playlist'
                 ? data.tracks : data.kind == 'track'
                 ? [data] : [];
+            store.dispatch(actions.resetTracks());
             store.dispatch(actions.setPlaylist(data));
             store.dispatch(actions.setSingle(data.kind == 'track'));
             store.dispatch(actions.setTracks(tracks));

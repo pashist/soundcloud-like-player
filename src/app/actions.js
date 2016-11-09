@@ -1,5 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import {Promise} from 'es6-promise';
+import {eq} from 'lodash';
+import { createAction, createActions } from 'redux-actions';
 
 export function createPlayer(startPlayback = false) {
     return function (dispatch, getState) {
@@ -8,7 +10,10 @@ export function createPlayer(startPlayback = false) {
             return new Promise((resolve, reject) => {
                 try {
                     state.audio.src = `https://api.soundcloud.com/tracks/${state.track.id}/stream?client_id=${state.options.playerClientId}`;
-                    state.audio.onended = () => dispatch(next());
+                    state.audio.onended = () => {
+                        dispatch(stop());
+                        dispatch(next());
+                    };
                     dispatch(setPlayer(state.audio));
                     startPlayback && dispatch(play());
                     resolve(true);
@@ -22,7 +27,10 @@ export function createPlayer(startPlayback = false) {
                 if (player.options.protocols[0] === 'rtmp') {
                     player.options.protocols.splice(0, 1);
                 }
-                player.on('finish', () => dispatch(next()));
+                player.on('finish', () => {
+                    dispatch(stop())
+                    dispatch(next())
+                });
                 dispatch(setPlayer(player));
                 if (startPlayback) {
                     dispatch(play());
@@ -35,43 +43,25 @@ export function createPlayer(startPlayback = false) {
     }
 }
 
-export function play() {
-    return {type: 'PLAYBACK_START'};
-}
-export function pause() {
-    return {type: 'PLAYBACK_PAUSE'}
-}
-export function toggle() {
-    return {type: 'PLAYBACK_TOGGLE'};
-}
+export const { play, pause, stop, toggle, setOptions, updateOptions} = createActions(
+    'PLAY',
+    'PAUSE',
+    'STOP',
+    'TOGGLE',
+    'SET_OPTIONS',
+    'UPDATE_OPTIONS'
+);
+
 export function next() {
     return function(dispatch, getState) {
-        return new Promise(resolve => {
-            let index = getState().index + 1;
-            if (index < getState().tracks.length) {
-                dispatch(setTrack(index));
-            } else {
-                dispatch(stop());
-            }
-            resolve();
-        })
+        dispatch(setTrack(getState().index + 1));
     }
-
-}
-export function stop() {
-    return {type: 'PLAYBACK_STOP'}
 }
 export function setPlayer(player) {
     return {type: 'SET_PLAYER', player: player}
 }
 export function setApi(api, playerApi) {
     return {type: 'SET_API', api: api, playerApi: playerApi}
-}
-export function setOptions(options) {
-    return {type: 'SET_OPTIONS', options: options}
-}
-export function updateOptions(options) {
-    return {type: 'UPDATE_OPTIONS', options: options}
 }
 /**
  * Set current track and fetch waveform data for track if it not fetched yet
@@ -83,41 +73,14 @@ export function setTrack(index, play = true) {
 
     return function (dispatch, getState) {
         let state = getState();
-
-        if (index == state.index && state.player) {
-            dispatch(toggle());
-            return Promise.resolve();
-        } else {
-            state.isPlaying && dispatch(pause());
-        }
         let track = state.tracks[index];
-        let promise;
-        if (!track) {
-            return Promise.reject();
-        }
 
-        dispatch(setCurrentTrack(index));
-        dispatch(createPlayer(play));
-        if (typeof state.likes[track.id] === 'undefined') {
+        if (track && !eq(track, state.track)) {
+            dispatch(setCurrentTrack(index));
+            dispatch(createPlayer(play));
             dispatch(trackLikeStatusRequest(track.id));
+            dispatch(trackWaveformRequest(index));
         }
-        // no actions if same track selected or it have waveform loaded/pending
-        if (track.waveform) {
-            return Promise.resolve();
-        }
-        // return promise if track selected pending waveform data
-        if (track.waveformPromise) {
-            promise = track.waveformPromise
-        } else {
-            promise = fetchWaveform(track)
-                .then(data => dispatch(setTrackWaveform(index, data)))
-                .catch(err => {
-                    console.log('fetchWaveform error', err);
-                    return dispatch(setTrackWaveform(index, null))
-                })
-        }
-        dispatch(fetchTrackWaveform(index, promise));
-        return promise;
     };
 }
 export function setCurrentTrack(index) {
@@ -141,11 +104,6 @@ export function addTracks(tracks) {
 export function setTrackWaveform(index, data) {
     return {type: 'SET_TRACK_WAVEFORM', index: index, data: data}
 }
-
-export function fetchTrackWaveform(index, promise) {
-    return {type: 'FETCH_TRACK_WAVEFORM', promise: promise, index: index}
-}
-
 export function setTrackCurrentTime(time) {
     return {type: 'SET_TRACK_CURRENT_TIME', time: time}
 }
@@ -189,6 +147,29 @@ export function trackLikeStatusRequest(trackId) {
     };
 }
 
+export function trackWaveformRequest(index) {
+    return function (dispatch, getState) {
+        let state = getState();
+        let promise;
+        let track = state.tracks[index];
+
+        if (!track || !track.waveform_url) return Promise.reject();
+        if (track.waveform) Promise.resolve();
+        if (track.waveformPromise) {
+            promise = track.waveformPromise;
+        } else {
+            let url = track.waveform_url.replace(/\/\/w1/, '//wis').replace(/png$/, 'json');
+            promise = fetch(url)
+                .then(res => res.json())
+                .then(data => dispatch(setTrackWaveform(index, data)))
+                .catch(err => {
+                    console.log('fetchWaveform error', err);
+                });
+            dispatch({type: 'TRACK_WAVEFORM_REQUEST', index: index, promise: promise});
+        }
+        return promise;
+    };
+}
 export function likeTrack(trackId) {
     return {type: 'LIKE_TRACK', trackId: trackId}
 }
