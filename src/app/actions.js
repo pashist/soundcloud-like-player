@@ -3,7 +3,7 @@ import {Promise} from 'es6-promise';
 import {eq} from 'lodash';
 import { createAction, createActions } from 'redux-actions';
 
-export function createPlayer(startPlayback = false) {
+export function createPlayer(startPlayback = false, startTime = 0) {
     return function (dispatch, getState) {
         let state = getState();
         if (state.options.nativePlayer) {
@@ -15,6 +15,7 @@ export function createPlayer(startPlayback = false) {
                         dispatch(next());
                     };
                     dispatch(setPlayer(state.audio));
+                    dispatch(setTrackCurrentTime(startTime));
                     startPlayback && dispatch(play());
                     resolve(true);
                 } catch (err) {
@@ -32,6 +33,7 @@ export function createPlayer(startPlayback = false) {
                     dispatch(next())
                 });
                 dispatch(setPlayer(player));
+                dispatch(setTrackCurrentTime(startTime));
                 if (startPlayback) {
                     dispatch(play());
                 }
@@ -67,9 +69,10 @@ export function setApi(api, playerApi) {
  * Set current track and fetch waveform data for track if it not fetched yet
  * @param index Track index
  * @param play Start playback after track ready
+ * @param startTime Start playback from given time in ms
  * @returns {*}
  */
-export function setTrack(index, play = true) {
+export function setTrack(index, play = true, startTime = 0) {
 
     return function (dispatch, getState) {
         let state = getState();
@@ -77,7 +80,7 @@ export function setTrack(index, play = true) {
 
         if (track && !eq(track, state.track)) {
             dispatch(setCurrentTrack(index));
-            dispatch(createPlayer(play));
+            dispatch(createPlayer(play, startTime));
             dispatch(trackLikeStatusRequest(track.id));
             dispatch(trackWaveformRequest(index));
         }

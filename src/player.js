@@ -90,10 +90,22 @@ export default class SoundCloudLikePlayer {
         return options;
     }
 
-    resolve(url) {
-        this.url = url;
-        return this.get('/resolve', {url:url}).then(data => {
-            this.updateSource(data);
+    parseStartTime(sourceUrl) {
+        let result = 0;
+        let hash = url.parse(sourceUrl).hash;
+        if (hash) {
+            let timeMark = hash ? hash.match(/#t=([0-9:]+)/) : null;
+            if (timeMark && timeMark[1]) {
+                result = timeMark[1].split(':').reverse().reduce((prev, curr, i) => prev + curr*Math.pow(60,i), 0) * 1000
+            }
+        }
+        return result;
+    }
+
+    resolve(sourceUrl) {
+        this.url = sourceUrl;
+        return this.get('/resolve', {url:sourceUrl}).then(data => {
+            this.updateSource(data, {startTime: this.parseStartTime(sourceUrl)});
             return data;
         }).catch(err => {
             console.log(err);
@@ -183,7 +195,7 @@ export default class SoundCloudLikePlayer {
         return copy;
     }
 
-    updateSource(data){
+    updateSource(data, params = {}){
         if (!data || data.errors || (data instanceof Array && !data.length)) {
             this.clear();
         } else {
@@ -195,7 +207,7 @@ export default class SoundCloudLikePlayer {
             store.dispatch(actions.setPlaylist(data));
             store.dispatch(actions.setSingle(data.kind == 'track'));
             store.dispatch(actions.setTracks(tracks));
-            store.dispatch(actions.setTrack(0, store.getState().options.autoplay));
+            store.dispatch(actions.setTrack(0, store.getState().options.autoplay, params.startTime));
         }
 
     }
