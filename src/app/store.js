@@ -138,6 +138,7 @@ const reducer = (state, action) => {
                 ...state, 
                 isMini: action.payload.height < 160,
                 isNarrow: action.payload.width < 350,
+                playlistHeight: action.payload.visual && !state.options.visual ? null : state.playlistHeight,
                 options: {...state.options, ...action.payload}
             };
         case 'LIKE_TRACK':
