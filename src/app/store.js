@@ -35,7 +35,8 @@ const initialState = {
     mainColor: [255, 255, 255],
     events: eventEmitter({}),
     resetScroll: false,
-    trackHeight: 31
+    trackHeight: 31,
+    isMobile: false
 };
 
 const reducer = (state, action) => {
@@ -131,6 +132,7 @@ const reducer = (state, action) => {
                 ...state, 
                 isMini: action.payload.height < 160,
                 isNarrow: action.payload.width < 350,
+                isMobile: action.payload.mobile,
                 options: action.payload
             };
         case 'UPDATE_OPTIONS':
@@ -138,6 +140,7 @@ const reducer = (state, action) => {
                 ...state, 
                 isMini: action.payload.height < 160,
                 isNarrow: action.payload.width < 350,
+                isMobile: typeof action.payload.mobile !== 'undefined' ? action.payload.mobile : state.isMobile,
                 playlistHeight: action.payload.visual && !state.options.visual ? null : state.playlistHeight,
                 options: {...state.options, ...action.payload}
             };

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Player from './components/player';
 import PlayerVisual from './components/player-visual';
 import Playlist from './components/playlist';
+import PlaylistMobile from './components/playlist-mobile';
 import CookiePolicy from './components/cookie-policy';
 import * as actions from './actions';
 
@@ -15,7 +16,8 @@ import './css/styles.scss';
     track: state.track,
     options: state.options,
     isMini: state.isMini,
-    isNarrow: state.isNarrow
+    isNarrow: state.isNarrow,
+    isMobile: state.isMobile
 }))
 
 export default class App extends React.Component {
@@ -31,12 +33,15 @@ export default class App extends React.Component {
         return (
             <div className={this.className()} style={this.style()}>
                 {this.props.options.visual ? <PlayerVisual ref="player"/> : <Player ref="player"/>}
-                {!this.props.isSingle && <Playlist ref="playlist"/>}
+                {!this.props.isSingle && this.playlist()}
                 <CookiePolicy />
             </div>
         )
     }
 
+    playlist() {
+        return this.props.isMobile ? <PlaylistMobile ref="playlist"/> : <Playlist ref="playlist"/>
+    }
     updateSize() {
         let {options, track} = this.props;
         let player = ReactDOM.findDOMNode(this.refs.player);
@@ -50,7 +55,12 @@ export default class App extends React.Component {
 
     style() {
         let style = {};
-        if (this.props.options.height && !this.props.isSingle) style.height = this.props.options.height;
+        if (this.props.options.height && !this.props.isSingle && !this.props.isMobile) {
+            style.height = this.props.options.height;
+        }
+        if (this.props.isMobile) {
+            style.minHeight = this.props.options.height;
+        }
         return style;
     }
 

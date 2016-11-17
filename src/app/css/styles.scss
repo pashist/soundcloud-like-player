@@ -250,6 +250,10 @@
   border-bottom: none;
 }
 
+.scl-player .playlist.mobile .playlist-item:nth-last-of-type(3) {
+  border-bottom: none;
+}
+
 .scl-player .playlist .track {
   padding: 4px 10px;
   cursor: pointer;
@@ -643,6 +647,30 @@
 
 .scl-player .playlist.loaded .playlist-end {
   display: block;
+}
+
+.scl-player .playlist .footer .load-more {
+  border: 1px solid transparent;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 4px;
+  min-width: 25px;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Garuda, Verdana, Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 2px 9px 2px 8px;
+  height: 22px;
+  line-height: 16px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 100;
+  vertical-align: baseline;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  outline: none;
+  margin: 5px auto;
 }
 
 .scl-player .playlist-end {
