@@ -3,8 +3,11 @@ import React from 'react';
 export default class PlayerButton extends React.Component {
     render() {
         if (!this.props.track) return null;
-        let gradientStart = this.props.color.fill[0] || this.props.fill;
-        let gradientStop = this.props.color.fill[1] || this.props.fill;
+        let colors = this.props.colors || {};
+        let buttonColors = colors.playerButton || {};
+        let colorStart = buttonColors.fill ? buttonColors.fill[0] || this.props.fill : colors.main;
+        let colorStop = buttonColors.fill ? buttonColors.fill[1] || this.props.fill : colors.shade;
+        let colorStroke = buttonColors.stroke || colors.darker;
         let className = 'play-button-wrapper';
         if (this.isDisabled()) {
             className += ' disabled'
@@ -16,14 +19,14 @@ export default class PlayerButton extends React.Component {
                         <defs>
                             <linearGradient id="scpPlayButtonGradient" x1="0%" y1="0%" x2="0%" y2="100%"
                                             spreadMethod="pad">
-                                <stop offset="0%" stopColor={gradientStart} stopOpacity="1"/>
-                                <stop offset="100%" stopColor={gradientStop} stopOpacity="1"/>
+                                <stop offset="0%" stopColor={colorStart} stopOpacity="1"/>
+                                <stop offset="100%" stopColor={colorStop} stopOpacity="1"/>
                             </linearGradient>
                         </defs>
-                        <circle fill="url(#scpPlayButtonGradient)" stroke={this.props.color.stroke} cx="21.5" cy="21.5"
+                        <circle fill="url(#scpPlayButtonGradient)" stroke={colorStroke} cx="21.5" cy="21.5"
                                 r="21"/>
                         <circle className="scpPlayButtonOverlay" fill="#000" fillOpacity="0.08"
-                                stroke={this.props.color.stroke} cx="21.5" cy="21.5" r="21"/>
+                                stroke={colorStroke} cx="21.5" cy="21.5" r="21"/>
                         { this.props.isPlaying ? this.drawPause() : this.drawPlay() }
 
                     </svg>

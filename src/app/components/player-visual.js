@@ -57,7 +57,7 @@ export default class PlayerVisual extends React.Component {
             <div className="player" style={style}>
                 <div className="sound">
                     <div className="sound-header">
-                        <PlayerButton color={getProperty(options, 'colors.playButton')} track={track}
+                        <PlayerButton colors={options.colors} track={track}
                                       isPlaying={isPlaying} player={player}
                                       onClick={this.togglePlayback}/>
                         <MediaButtons data={playlist || track}

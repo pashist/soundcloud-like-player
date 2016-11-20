@@ -42,10 +42,14 @@ export default class SoundCloudLikePlayer {
             autoplay: false,
             apiUrl: 'https://api.soundcloud.com',
             colors: {
-                playButton: {
+                main: '#ff5500',
+                shade: '#ff2200',
+                darker: '#cc4400',
+                lighter: '#ff884d',
+             /*   playButton: {
                     fill: ['#ff5500', '#ff2200'],
                     stroke: '#cc4400'
-                },
+                },*/
                 playlist: {
                     track: '#333',
                     trackActive: '#ff5500'

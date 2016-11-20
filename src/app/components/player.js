@@ -8,7 +8,6 @@ import TrackStats from './tracks-stats';
 import SharePanel from './share-panel';
 import {connect} from 'react-redux';
 import * as actions from '../actions';
-import {get as getProperty} from 'lodash'
 
 class Player extends React.Component {
     constructor(props) {
@@ -27,7 +26,7 @@ class Player extends React.Component {
                 {!isNarrow && <PlayerArtwork track={track} showFollowButton={options.showFollowButton}/>}
                 <div className="sound">
                     <div className="sound-header">
-                        <PlayerButton color={getProperty(options, 'colors.playButton')} 
+                        <PlayerButton colors={options.colors} 
                                       track={track}
                                       isPlaying={isPlaying} 
                                       player={player}

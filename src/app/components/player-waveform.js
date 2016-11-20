@@ -21,7 +21,7 @@ class PlayerWaveForm extends React.Component {
         this.gutterWidth = 1;
         this.wavesCount = 0;
         this.reflection = 0.3;
-        this.active = 0;
+        this.played = 0;
         this.selected = 0;
         this.timer = null;
 
@@ -88,32 +88,56 @@ class PlayerWaveForm extends React.Component {
             let bgBrightness = this.rgbToHsl(...this.props.mainColor)[2];
             bgBrightness < 0.5 ? this.addColorsLight() : this.addColorsDefault();
         } else {
-            this.addColorsDefault();
+            this.addColorsCustom();
         }
+    }
+
+    isCustomColors() {
+        return true;
     }
 
     addColorsDefault() {
         this.setColor('wave-focus', '#333333');
         this.setGradient('wave', [0, 'rgb(51,51,51)', 1, 'rgb(51,51,51)']);
-        this.setGradient('wave-active', [0, 'rgb(255,51,0)', 1, 'rgb(255,85,0)']);
+        this.setGradient('wave-played', [0, 'rgb(255,51,0)', 1, 'rgb(255,85,0)']);
         this.setGradient('wave-selected', [0, 'rgb(153,51,26)', 1, 'rgb(153,69,26)']);
         this.setGradient('gutter', [0, 'rgb(51,51,51)', 0.5, 'rgba(82,82,82,0.5)', 1, 'rgba(102,102,102,0.1)']);
-        this.setGradient('gutter-active', [0, 'rgba(255,51,0,1)', 1, 'rgba(255,85,0,0.1)']);
+        this.setGradient('gutter-played', [0, 'rgba(255,51,0,1)', 1, 'rgba(255,85,0,0.1)']);
         this.setGradient('gutter-selected', [0, 'rgba(153,51,26,1)', 1, 'rgba(153,69,26,0.1)']);
         this.setColor('reflection', '#999999');
-        this.setColor('reflection-active', '#FFC0A0')
+        this.setColor('reflection-played', '#FFC0A0')
+    }
+
+    addColorsCustom() {
+        let colors = this.props.colors;
+        let mixed = this.rgbaMix([51,51,51,1], this.hexToRgb(colors.main, 0.5));
+        this.setColor('wave', 'rgb(51,51,51)');
+        this.setColor('wave-played', colors.main);
+        this.setColor('wave-selected', 'rgba(' + mixed.join() + ')');
+        this.setGradient('gutter', [0, 'rgba(51,51,51,1)', 0.4, 'rgba(82,82,82,0.6)', 1, 'rgba(102,102,102,0)']);
+        this.setGradient('gutter-played', [0, this.hexToRgbString(colors.main, 1), 0.4, this.hexToRgbString(colors.main, 0.6), 1, this.hexToRgbString(colors.main, 0)]);
+        this.setGradient('gutter-selected', [
+            0, 'rgba(' + mixed.join() + ')',
+            0.4, 'rgba(' + mixed.slice(0, 3).join() + ',0.6)',
+            1, 'rgba(' + mixed.slice(0, 3).join() + ',0)'
+        ]);
+
+        this.setColor('reflection', 'rgba(51,51,51,0.5)');
+        this.setColor('reflection-played', '#FFC0A0');
+        this.setColor('reflection-gutter', 'rgba(51,51,51,0.125)');
+        this.setColor('reflection-gutter-played', '#FFC0A0');
     }
 
     addColorsLight() {
         this.setColor('wave-focus', [0, 'rgb(255,255,255)'], [.7, 'rgb(255,255,255)'], [.701, 'rgba(255,255,255,0.5)'], [1, 'rgba(255,255,255,0.5)']);
         this.setGradient('wave', [0, '#FFFFFF', 1, '#FFFFFF']);
-        this.setGradient('wave-active', [0, 'rgb(255,51,0)', 1, 'rgb(255,85,0)']);
+        this.setGradient('wave-played', [0, 'rgb(255,51,0)', 1, 'rgb(255,85,0)']);
         this.setGradient('wave-selected', [0, 'rgb(255,153,128)', 1, 'rgb(255,171,128)']);
         this.setGradient('gutter', [0, 'rgba(255,255,255,0.5)', 1, 'rgba(255,255,255,0.125)']);
-        this.setGradient('gutter-active', [0, 'rgba(255,51,0,0.5)', 1, 'rgba(255,85,0,0.125)']);
+        this.setGradient('gutter-played', [0, 'rgba(255,51,0,0.5)', 1, 'rgba(255,85,0,0.125)']);
         this.setGradient('gutter-selected', [0, 'rgba(255,153,128,0.5)', 1, 'rgba(255,171,128,0.125)']);
         this.setColor('reflection', '#999999');
-        this.setColor('reflection-active', '#FFC0A0')
+        this.setColor('reflection-played', '#FFC0A0');
     }
 
     setColor(name, color) {
@@ -129,7 +153,7 @@ class PlayerWaveForm extends React.Component {
     }
 
     draw() {
-        this.active = this.getWaveIndexByTime();
+        this.played = this.getWaveIndexByTime();
         requestAnimationFrame(this.drawCanvas)
     }
 
@@ -155,13 +179,13 @@ class PlayerWaveForm extends React.Component {
             // wave
 
             // if is hovered
-            if (this.selected > 0 && (this.selected <= i && i < this.active) || (this.selected > i && i >= this.active)) {
+            if (this.selected > 0 && (this.selected <= i && i < this.played) || (this.selected > i && i >= this.played)) {
 
                 this.ctx.fillStyle = this.colors['wave-selected']
             }
             // if is active
-            else if (this.active > i) {
-                this.ctx.fillStyle = this.colors['wave-active']
+            else if (this.played > i) {
+                this.ctx.fillStyle = this.colors['wave-played']
             }
             // default
             else {
@@ -175,12 +199,12 @@ class PlayerWaveForm extends React.Component {
             // gutter
 
             // if is hovered
-            if (this.selected > 0 && (this.selected <= i && i < this.active) || (this.selected > i && i >= this.active)) {
+            if (this.selected > 0 && (this.selected <= i && i < this.played) || (this.selected > i && i >= this.played)) {
                 this.ctx.fillStyle = this.colors['gutter-selected']
             }
             // if is active
-            else if (this.active > i) {
-                this.ctx.fillStyle = this.colors['gutter-active']
+            else if (this.played > i) {
+                this.ctx.fillStyle = this.colors['gutter-played']
             }
             // default
             else {
@@ -199,8 +223,7 @@ class PlayerWaveForm extends React.Component {
             if (this.reflection > 0) {
 
                 let reflectionHeight = (Math.abs(this.waves[i]) / (1 - this.reflection) ) * this.reflection;
-                if (this.active > i) this.ctx.fillStyle = this.colors['wave-active'];
-                else this.ctx.fillStyle = this.colors['wave'];
+                this.ctx.fillStyle = this.played > i ? this.colors['wave-played'] : this.colors['wave'];
                 // draw reflection
                 this.ctx.globalAlpha = 0.4;
                 this.ctx.fillRect(xPos, yPos, waveWidth, reflectionHeight);
@@ -315,7 +338,7 @@ class PlayerWaveForm extends React.Component {
     }
 
     onClick(e) {
-        this.active = this.getWaveIndexByCoords(e);
+        this.played = this.getWaveIndexByCoords(e);
         this.draw();
         this.props.onClick();
         this.props.onSeek(this.getTrackTimeByCoords(e));
@@ -411,6 +434,27 @@ class PlayerWaveForm extends React.Component {
 
         return [h, s, l];
     }
+
+    hexToRgb(hex, alpha) {
+        let bigint = parseInt(hex.replace(/[^0-9A-F]/gi, ''), 16);
+        let result = [bigint >> 16 & 255, bigint >> 8 & 255, bigint & 255];
+        if (typeof alpha !== 'undefined') {
+            result.push(alpha)
+        }
+        return result;
+    }
+    hexToRgbString(hex, alpha) {
+        let rgb = this.hexToRgb(hex, alpha);
+        return (typeof alpha !== 'undefined') ? 'rgba(' + rgb.join() + ')' : 'rgb(' + rgb.join() + ')';
+    }
+    rgbaMix(base, over) {
+        var mix = [];
+        mix[3] = 1 - (1 - over[3]) * (1 - base[3]); // alpha
+        mix[0] = Math.round((over[0] * over[3] + base[0] * base[3] * (1 - over[3])) / mix[3]); // red
+        mix[1] = Math.round((over[1] * over[3] + base[1] * base[3] * (1 - over[3])) / mix[3]); // green
+        mix[2] = Math.round((over[2] * over[3] + base[2] * base[3] * (1 - over[3])) / mix[3]); // blue
+        return mix;
+    }
 }
 
 export default connect(state => ({
@@ -419,5 +463,6 @@ export default connect(state => ({
     isPlaying: state.isPlaying,
     isPlayed: state.isPlayed,
     mainColor: state.mainColor,
-    visual: state.options.visual
+    visual: state.options.visual,
+    colors: state.options.colors
 }))(PlayerWaveForm);
