@@ -1,6 +1,6 @@
 {
   "name": "soundcloud-like-player",
-  "description": "This library allows you to insert in any html element on page music player like a soundcloud widget."
+  "description": "This library allows you to insert in any html element on page music player like a soundcloud widget.",
   "version": "0.5.2",
   "scripts": {
     "build": "webpack --progress",
